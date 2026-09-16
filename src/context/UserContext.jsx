@@ -1,11 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { MOCK_USERS, CURRENT_USER_ID } from '../data/users';
 import { authService } from '../services/auth/authService';
 import { supabase } from '../lib/supabase';
 
 const UserContext = createContext();
-
-const STORAGE_KEY_USERS_ALL = 'leenq_all_users';
 
 export function UserProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -13,28 +10,16 @@ export function UserProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
 
   const [users, setUsers] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY_USERS_ALL);
-
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    return MOCK_USERS;
+    try {
+      localStorage.removeItem('leenq_all_users');
+    } catch (e) {}
+    return [];
   });
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalInitialView, setAuthModalInitialView] = useState('welcome');
 
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-
-  // Keep the local users cache for existing UI features.
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_USERS_ALL, JSON.stringify(users));
-  }, [users]);
 
   // Get the current Supabase user when the app starts.
   useEffect(() => {

@@ -1,22 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { MOCK_HANGOUTS } from '../data/hangouts';
 import { useUser } from './UserContext';
 import { hangoutService } from '../services/hangout/hangoutService';
 import { supabase } from '../lib/supabase';
 
 const LeenQContext = createContext();
 
-const STORAGE_KEY_HANGOUTS = 'leenq_hangouts_list';
-
 export function LeenQProvider({ children }) {
   const { currentUser } = useUser();
 
   const [hangouts, setHangouts] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY_HANGOUTS);
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { console.error(e); }
-    }
-    return MOCK_HANGOUTS;
+    try {
+      localStorage.removeItem('leenq_hangouts_list');
+    } catch (e) {}
+    return [];
   });
 
   const [messagesMap, setMessagesMap] = useState({});
@@ -27,12 +23,8 @@ export function LeenQProvider({ children }) {
     const loadSupabaseHangouts = async () => {
       try {
         const fetched = await hangoutService.fetchHangouts();
-        if (isMounted && fetched && fetched.length > 0) {
-          setHangouts(prev => {
-            const fetchedIds = new Set(fetched.map(h => h.id));
-            const remainingLocal = prev.filter(h => !fetchedIds.has(h.id));
-            return [...fetched, ...remainingLocal];
-          });
+        if (isMounted) {
+          setHangouts(fetched || []);
         }
       } catch (err) {
         console.error('Failed loading hangouts from Supabase:', err);
@@ -44,10 +36,6 @@ export function LeenQProvider({ children }) {
     loadSupabaseHangouts();
     return () => { isMounted = false; };
   }, [currentUser?.id]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_HANGOUTS, JSON.stringify(hangouts));
-  }, [hangouts]);
 
   const loadSpaceMessages = async (hangoutId) => {
     if (!hangoutId) return [];
@@ -238,54 +226,25 @@ export function LeenQProvider({ children }) {
   };
 
   const createHangout = async (newHangoutData) => {
-    let newHangout;
-    if (currentUser?.id) {
-      try {
-        newHangout = await hangoutService.createHangout(currentUser.id, newHangoutData);
-      } catch (err) {
-        console.warn('Supabase create failed, falling back to local creation:', err.message);
-      }
+    if (!currentUser?.id) {
+      throw new Error('You must be signed in to host an activity.');
     }
 
-    if (!newHangout) {
-      const slug = newHangoutData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      const newId = `${slug}-${Date.now().toString().slice(-4)}`;
-
-      newHangout = {
-        id: newId,
-        title: newHangoutData.title,
-        category: newHangoutData.category,
-        location: newHangoutData.location,
-        city: "Abuja",
-        date: newHangoutData.date,
-        time: newHangoutData.time,
-        description: newHangoutData.description,
-        hostId: currentUser?.id || 'local-user',
-        maxAttendees: parseInt(newHangoutData.maxAttendees, 10) || 10,
-        attendeeIds: [currentUser?.id || 'local-user'],
-        image: newHangoutData.image || "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1200&q=80",
-        status: "upcoming",
-        featured: false,
-        isPopular: false
-      };
-    }
-
+    const newHangout = await hangoutService.createHangout(currentUser.id, newHangoutData);
     setHangouts(prev => [newHangout, ...prev]);
 
-    if (currentUser?.id) {
-      try {
-        const welcomeMsg = await hangoutService.sendSpaceMessage({
-          hangoutId: newHangout.id,
-          userId: currentUser.id,
-          userName: currentUser.name || 'Host',
-          userAvatar: currentUser.avatar,
-          text: `${currentUser.name || 'Host'} created the activity and opened the Qleenq Space!`,
-          type: 'system'
-        });
-        if (welcomeMsg) addRealtimeMessage(newHangout.id, welcomeMsg);
-      } catch (e) {
-        console.warn('Could not send welcome system message:', e.message);
-      }
+    try {
+      const welcomeMsg = await hangoutService.sendSpaceMessage({
+        hangoutId: newHangout.id,
+        userId: currentUser.id,
+        userName: currentUser.name || 'Host',
+        userAvatar: currentUser.avatar,
+        text: `${currentUser.name || 'Host'} created the activity and opened the Qleenq Space!`,
+        type: 'system'
+      });
+      if (welcomeMsg) addRealtimeMessage(newHangout.id, welcomeMsg);
+    } catch (e) {
+      console.warn('Could not send welcome system message:', e.message);
     }
 
     return newHangout;

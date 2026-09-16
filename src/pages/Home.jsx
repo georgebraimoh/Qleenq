@@ -5,6 +5,7 @@ import { Compass, Plus, MapPin, Sparkles, Calendar, ArrowRight, Shield, Users, G
 import Button from '../components/common/Button';
 import HangoutCard from '../components/hangout/HangoutCard';
 import AvatarStack from '../components/common/AvatarStack';
+import EmptyState from '../components/common/EmptyState';
 import LocationAutocomplete from '../components/common/LocationAutocomplete';
 import PageTransition from '../components/layout/PageTransition';
 import { useLeenQ } from '../context/LeenQContext';
@@ -182,7 +183,7 @@ export default function Home() {
                       </div>
                       <h3 className="text-lg font-bold font-heading text-[#171717]">Jabi Lake Sunset Kayaking</h3>
                       <div className="flex items-center justify-between pt-2 border-t border-[#E8E6E1]">
-                        <AvatarStack attendeeIds={["user-7", "user-3", "user-1"]} size="sm" />
+                        <AvatarStack attendeeIds={[]} size="sm" />
                         <span className="text-xs font-semibold text-[#6F6F6F]">Mon · 5:00 PM</span>
                       </div>
                     </div>
@@ -223,9 +224,20 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {globalHighlights.map(hangout => (
-              <HangoutCard key={hangout.id} hangout={hangout} />
-            ))}
+            {globalHighlights.length === 0 ? (
+              <div className="col-span-full py-6 text-center">
+                <EmptyState
+                  title="No activities yet"
+                  description="Be the first to host an activity in your area!"
+                  actionLabel="Create an activity"
+                  onAction={() => navigate('/create')}
+                />
+              </div>
+            ) : (
+              globalHighlights.map(hangout => (
+                <HangoutCard key={hangout.id} hangout={hangout} />
+              ))
+            )}
           </div>
         </section>
 

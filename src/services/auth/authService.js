@@ -213,7 +213,7 @@ export const authService = {
     }
 
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: 'http://localhost:5174/reset-password'
+      redirectTo: `${window.location.origin}/reset-password`
     });
 
     if (error) {

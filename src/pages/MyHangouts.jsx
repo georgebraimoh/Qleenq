@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PageTransition from '../components/layout/PageTransition';
 import HangoutCard from '../components/hangout/HangoutCard';
 import EmptyState from '../components/common/EmptyState';
@@ -8,6 +8,7 @@ import { useLeenQ } from '../context/LeenQContext';
 import { useUser } from '../context/UserContext';
 
 export default function MyHangouts() {
+  const navigate = useNavigate();
   const { hangouts } = useLeenQ();
   const { currentUser, isAuthLoading } = useUser();
   const [activeTab, setActiveTab] = useState('upcoming');
@@ -125,7 +126,7 @@ export default function MyHangouts() {
             }
             description="Find something fun happening around Abuja or create your own casual meetup."
             actionLabel="Explore activities"
-            onAction={() => window.location.href = '/explore'}
+            onAction={() => navigate('/explore')}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
