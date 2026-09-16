@@ -19,6 +19,26 @@ export default function HangoutSpace() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
+  const hangout = (isAuthLoading || isHangoutsLoading) ? null : getHangoutById(id);
+  const roomMessages = (id && messagesMap[id]) ? messagesMap[id] : [];
+  const attending = hangout ? isAttending(hangout.id) : false;
+
+  useEffect(() => {
+    if (!id || !attending || isAuthLoading || isHangoutsLoading) return;
+
+    loadSpaceMessages(id);
+    const unsubscribe = subscribeToSpaceMessages(id);
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [id, attending, isAuthLoading, isHangoutsLoading]);
+
+  useEffect(() => {
+    if (isAuthLoading || isHangoutsLoading) return;
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [roomMessages.length, isAuthLoading, isHangoutsLoading]);
+
   // Loading guard while Supabase restores authentication session or fetches hangouts
   if (isAuthLoading || isHangoutsLoading) {
     return (
@@ -30,29 +50,6 @@ export default function HangoutSpace() {
       </PageTransition>
     );
   }
-
-  const hangout = getHangoutById(id);
-  const roomMessages = messagesMap[id] || [];
-  const attending = hangout ? isAttending(hangout.id) : false;
-
-  useEffect(() => {
-    if (!id || !attending) return;
-
-    loadSpaceMessages(id);
-    const unsubscribe = subscribeToSpaceMessages(id);
-
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [id, attending]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [roomMessages.length]);
 
   if (!hangout) {
     return (
