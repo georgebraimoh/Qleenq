@@ -131,7 +131,7 @@ export default function Navbar() {
                   alt={currentUser.name}
                   className="w-9 h-9 rounded-full object-cover border border-[#E8E6E1] shadow-xs"
                 />
-                <ChevronDown className="w-3.5 h-3.5 text-[#6F6F6F]" />
+                <ChevronDown className={`w-3.5 h-3.5 text-[#6F6F6F] transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
               </motion.button>
 
               <AnimatePresence>

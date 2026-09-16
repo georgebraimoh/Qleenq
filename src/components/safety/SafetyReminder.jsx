@@ -24,7 +24,7 @@ export default function SafetyReminder({ mode = 'details', className = '' }) {
           <span className="text-[#6F6F6F]">Consider meeting in a public place and letting someone you trust know where you'll be.</span>
         </div>
       </div>
-      <Link to="/safety" className="text-[#800020] hover:underline font-semibold shrink-0 flex items-center gap-1">
+      <Link to="/safety" className="text-[#800020] hover:underline font-semibold shrink-0 flex items-center gap-1 link-nudge">
         <span>Guide</span>
         <ArrowRight className="w-3 h-3" />
       </Link>

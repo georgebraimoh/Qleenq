@@ -41,18 +41,67 @@
 }
 
 /* Custom Editorial Glass Utilities */
-.editorial-card {
+.editorial-card,
+.editorial-surface {
   background-color: #FFFFFF;
   border: 1px solid #E8E6E1;
   border-radius: 1.25rem;
   box-shadow: 0 4px 20px -2px rgba(23, 23, 23, 0.03);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.editorial-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px -4px rgba(23, 23, 23, 0.08);
-  border-color: #D6D2C9;
+.editorial-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .editorial-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px -4px rgba(23, 23, 23, 0.08);
+    border-color: #D6D2C9;
+  }
+
+  .img-zoom:hover img,
+  .group:hover .img-zoom img {
+    transform: scale(1.05);
+  }
+}
+
+.img-zoom {
+  overflow: hidden;
+}
+
+.img-zoom img {
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pressable {
+  transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.pressable:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.link-nudge {
+  transition: color 0.2s ease;
+}
+
+.link-nudge svg {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link-nudge:hover svg {
+    transform: translateX(3px);
+  }
+}
+
+.accent-orb {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 9999px;
 }
 
 .badge-sage {
@@ -72,4 +121,29 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .editorial-card:hover,
+  .pressable:active:not(:disabled) {
+    transform: none;
+  }
+
+  .img-zoom img,
+  .img-zoom:hover img {
+    transform: none;
+  }
 }

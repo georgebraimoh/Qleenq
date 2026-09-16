@@ -125,7 +125,7 @@ export default function Explore() {
           {isFiltered && (
             <button
               onClick={handleResetFilters}
-              className="text-[#800020] hover:underline font-semibold cursor-pointer flex items-center gap-1"
+              className="text-[#800020] hover:underline font-semibold cursor-pointer flex items-center gap-1 pressable link-nudge"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Reset all filters</span>

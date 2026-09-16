@@ -53,8 +53,14 @@ export default function SafetySection() {
   const [expandedId, setExpandedId] = useState('public');
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="editorial-card p-8 md:p-12 bg-white border border-[#E8E6E1] rounded-3xl shadow-xs space-y-8">
+    <motion.section
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+    >
+      <div className="editorial-surface p-8 md:p-12 bg-white border border-[#E8E6E1] rounded-3xl shadow-xs space-y-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#E8E6E1]">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F0E8] text-[#2D5A27] text-xs font-semibold">
@@ -87,10 +93,10 @@ export default function SafetySection() {
               <div
                 key={tip.id}
                 onClick={() => setExpandedId(isExpanded ? null : tip.id)}
-                className={`p-5 rounded-2xl border transition-all cursor-pointer ${
+                className={`pressable p-5 rounded-2xl border transition-all cursor-pointer ${
                   isExpanded
                     ? 'border-[#800020] bg-[#FDF0F2]/40 shadow-sm'
-                    : 'border-[#E8E6E1] bg-[#F7F6F2] hover:border-[#D6D2C9]'
+                    : 'border-[#E8E6E1] bg-[#F7F6F2] hover:border-[#D6D2C9] hover:-translate-y-0.5'
                 }`}
               >
                 <div className="flex items-center justify-between gap-3">
@@ -128,6 +134,6 @@ export default function SafetySection() {
           })}
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

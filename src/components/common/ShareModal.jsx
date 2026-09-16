@@ -125,7 +125,7 @@ export default function ShareModal({ isOpen, onClose, hangout }) {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-colors"
+              className="pressable px-4 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-colors"
             >
               <Send className="w-4 h-4" />
               <span>WhatsApp</span>
@@ -135,7 +135,7 @@ export default function ShareModal({ isOpen, onClose, hangout }) {
               href={twitterUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-3 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-colors"
+              className="pressable px-4 py-3 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-colors"
             >
               <Share2 className="w-4 h-4" />
               <span>Twitter / X</span>

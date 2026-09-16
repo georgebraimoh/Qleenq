@@ -62,7 +62,8 @@ export default function Profile() {
         />
 
         {/* Profile Card Header */}
-        <div className="editorial-card p-6 md:p-10 relative overflow-hidden bg-white shadow-xl">
+        <div className="editorial-surface p-6 md:p-10 relative overflow-hidden bg-white shadow-xl">
+          <span className="accent-orb -right-8 -top-8 w-24 h-24 bg-[#800020]/6" />
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
               <img

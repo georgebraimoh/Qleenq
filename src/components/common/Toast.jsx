@@ -43,7 +43,7 @@ export function ToastProvider({ children }) {
 
               <button
                 onClick={hideToast}
-                className="p-1 rounded-full text-stone-400 hover:text-white transition-colors ml-2 cursor-pointer"
+                className="p-1 rounded-full text-stone-400 hover:text-white transition-colors ml-2 cursor-pointer pressable"
               >
                 <X className="w-4 h-4" />
               </button>

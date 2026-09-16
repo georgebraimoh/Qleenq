@@ -33,6 +33,9 @@ export default function Home() {
       <div className="space-y-20 pb-10">
         {/* HERO SECTION */}
         <section className="relative pt-12 md:pt-20 pb-16 overflow-hidden">
+          <span className="accent-orb -left-10 top-10 w-28 h-28 bg-[#800020]/6" />
+          <span className="accent-orb right-16 top-20 w-2.5 h-2.5 bg-[#800020]" />
+          <span className="accent-orb left-[42%] bottom-6 w-14 h-14 border border-[#800020]/15" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               {/* Hero Text */}
@@ -164,9 +167,9 @@ export default function Home() {
                     initial={{ rotate: -3, y: 0 }}
                     animate={{ rotate: -2, y: [0, -6, 0] }}
                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                    className="editorial-card p-5 bg-white shadow-xl rounded-3xl relative z-10 border border-[#E8E6E1]"
+                    className="group editorial-card p-5 bg-white shadow-xl rounded-3xl relative z-10 border border-[#E8E6E1]"
                   >
-                    <div className="relative h-48 rounded-2xl overflow-hidden mb-4">
+                    <div className="relative h-48 rounded-2xl overflow-hidden mb-4 img-zoom">
                       <img
                         src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80"
                         alt="Jabi Lake Kayaking"
@@ -209,7 +212,13 @@ export default function Home() {
         </section>
 
         {/* SECTION 1: GLOBAL HIGHLIGHTS */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Live Activities</span>
@@ -217,7 +226,7 @@ export default function Home() {
                 Experiences happening near real places
               </h2>
             </div>
-            <Link to="/explore" className="text-sm font-semibold text-[#800020] hover:underline flex items-center gap-1">
+            <Link to="/explore" className="text-sm font-semibold text-[#800020] hover:underline flex items-center gap-1 link-nudge">
               <span>View all activities</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -239,11 +248,18 @@ export default function Home() {
               ))
             )}
           </div>
-        </section>
+        </motion.section>
 
         {/* SECTION 2: YOU MIGHT ENJOY (CATEGORIES) */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white border border-[#EFE8DB] rounded-3xl p-8 md:p-12 shadow-xs space-y-8">
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
+          <div className="relative bg-white border border-[#EFE8DB] rounded-3xl p-8 md:p-12 shadow-xs space-y-8 overflow-hidden">
+            <span className="accent-orb -right-6 -top-6 w-20 h-20 bg-[#800020]/5" />
             <div className="text-center max-w-xl mx-auto">
               <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Explore by Interest</span>
               <h2 className="text-3xl font-extrabold font-['Bricolage_Grotesque',sans-serif] text-[#171717] mt-1">
@@ -259,9 +275,9 @@ export default function Home() {
                 <Link
                   key={cat.id}
                   to={`/explore?category=${cat.id}`}
-                  className="p-4 rounded-2xl bg-[#FAF4F5] border border-[#EFE8DB] hover:bg-[#800020] hover:text-white group transition-all duration-200 text-center flex flex-col items-center justify-center space-y-2 cursor-pointer shadow-xs"
+                  className="pressable p-4 rounded-2xl bg-[#FAF4F5] border border-[#EFE8DB] hover:bg-[#800020] hover:text-white hover:-translate-y-0.5 group transition-all duration-200 text-center flex flex-col items-center justify-center space-y-2 cursor-pointer shadow-xs"
                 >
-                  <span className="text-2xl">{cat.emoji}</span>
+                  <span className="text-2xl transition-transform duration-200 group-hover:scale-110">{cat.emoji}</span>
                   <span className="text-xs font-bold font-heading text-[#171717] group-hover:text-white transition-colors">
                     {cat.label}
                   </span>
@@ -269,10 +285,16 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* SECTION 3: PRODUCT PHILOSOPHY QUOTE */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
           <div className="relative overflow-hidden bg-stone-900 text-white rounded-3xl p-8 md:p-16 shadow-2xl">
             <div className="relative z-10 max-w-3xl space-y-6">
               <div className="w-12 h-12 rounded-2xl bg-[#800020] flex items-center justify-center text-white">
@@ -303,14 +325,21 @@ export default function Home() {
             {/* Decorative background glow */}
             <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-[#800020]/20 rounded-full blur-3xl" />
           </div>
-        </section>
+        </motion.section>
 
         {/* SAFETY & TRUST SECTION */}
         <SafetySection />
 
         {/* SECTION 4: FINAL CTA */}
-        <section className="max-w-4xl mx-auto px-4 text-center space-y-6 pt-8">
-          <div className="bg-[#FDF0F2] border border-[#800020]/20 rounded-3xl p-10 md:p-14 space-y-6">
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-4xl mx-auto px-4 text-center space-y-6 pt-8"
+        >
+          <div className="relative overflow-hidden bg-[#FDF0F2] border border-[#800020]/20 rounded-3xl p-10 md:p-14 space-y-6">
+            <span className="accent-orb left-6 -top-4 w-3 h-3 bg-[#800020] rotate-12" />
             <h2 className="text-3xl md:text-4xl font-extrabold font-heading text-[#171717]">
               Ready to go somewhere?
             </h2>
@@ -330,7 +359,7 @@ export default function Home() {
               </Link>
             </div>
           </div>
-        </section>
+        </motion.section>
       </div>
     </PageTransition>
   );

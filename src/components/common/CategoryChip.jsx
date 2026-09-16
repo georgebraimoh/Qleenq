@@ -7,7 +7,7 @@ export default function CategoryChip({ label, active, onClick, count, emoji }) {
       onClick={onClick}
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.95 }}
-      className={`relative px-4 py-2 rounded-full text-xs font-bold tracking-wide whitespace-nowrap transition-colors duration-200 cursor-pointer flex items-center gap-1.5 ${
+      className={`relative px-4 py-2 rounded-full text-xs font-bold tracking-wide whitespace-nowrap transition-colors duration-200 cursor-pointer flex items-center gap-1.5 pressable ${
         active
           ? 'text-white shadow-sm'
           : 'bg-white border border-[#EFE8DB] text-[#6F6F6F] hover:text-[#171717] hover:border-[#171717]/30'

@@ -113,9 +113,9 @@ export default function HangoutDetails() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-4 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-xs font-semibold text-[#6F6F6F] hover:text-[#171717] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#6F6F6F] hover:text-[#171717] transition-colors cursor-pointer group"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
             <span>Back to discovery</span>
           </button>
 
@@ -132,7 +132,7 @@ export default function HangoutDetails() {
 
             <button
               onClick={() => setReportModalOpen(true)}
-              className="p-2 rounded-full text-[#6F6F6F] hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+              className="p-2 rounded-full text-[#6F6F6F] hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer pressable"
               title="Report Concern"
             >
               <ShieldAlert className="w-4 h-4" />
@@ -142,7 +142,7 @@ export default function HangoutDetails() {
 
         {/* Hero Cover Header */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 mb-8">
-          <div className="relative h-72 md:h-96 rounded-3xl overflow-hidden shadow-lg border border-[#E8E6E1]">
+          <div className="relative h-72 md:h-96 rounded-3xl overflow-hidden shadow-lg border border-[#E8E6E1] img-zoom">
             <img
               src={hangout.image}
               alt={hangout.title}
@@ -183,7 +183,7 @@ export default function HangoutDetails() {
           {/* Main Article Body */}
           <div className="lg:col-span-8 space-y-8">
             {/* Quick Meta Info Box */}
-            <div className="editorial-card p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="editorial-surface p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-[#FDF0F2] text-[#800020] flex items-center justify-center shrink-0">
                   <Calendar className="w-5 h-5" />
@@ -261,7 +261,7 @@ export default function HangoutDetails() {
                     <Link
                       key={user.id}
                       to={`/profile/${user.username}`}
-                      className="p-3 bg-white border border-[#E8E6E1] rounded-2xl flex items-center gap-3 hover:border-[#D6D2C9] transition-all"
+                      className="p-3 bg-white border border-[#E8E6E1] rounded-2xl flex items-center gap-3 hover:border-[#D6D2C9] hover:-translate-y-0.5 hover:shadow-sm transition-all pressable"
                     >
                       <img
                         src={user.avatar}
@@ -281,7 +281,7 @@ export default function HangoutDetails() {
 
           {/* Sidebar CTA Card (Desktop) */}
           <div className="lg:col-span-4 sticky top-24 space-y-6">
-            <div className="editorial-card p-6 space-y-6 shadow-xl">
+            <div className="editorial-surface p-6 space-y-6 shadow-xl">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#6F6F6F]">Activity Status</span>
                 <div className="text-2xl font-bold font-heading text-[#171717]">

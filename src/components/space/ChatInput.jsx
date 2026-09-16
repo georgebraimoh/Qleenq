@@ -29,10 +29,10 @@ export default function ChatInput({ onSendMessage, disabled = false }) {
         disabled={!isCanSend}
         whileHover={isCanSend ? { scale: 1.05 } : {}}
         whileTap={isCanSend ? { scale: 0.92 } : {}}
-        className="w-11 h-11 rounded-full bg-[#800020] hover:bg-[#69001A] text-white flex items-center justify-center shrink-0 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
+        className="w-11 h-11 rounded-full bg-[#800020] hover:bg-[#69001A] text-white flex items-center justify-center shrink-0 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs group"
         aria-label="Send message"
       >
-        <Send className="w-4 h-4 ml-0.5" />
+        <Send className="w-4 h-4 ml-0.5 transition-transform duration-150 group-hover:translate-x-0.5" />
       </motion.button>
     </form>
   );

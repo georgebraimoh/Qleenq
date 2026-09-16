@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
 export default function Button({
@@ -14,7 +14,8 @@ export default function Button({
   className = '',
   ...props
 }) {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
+  const prefersReducedMotion = useReducedMotion();
+  const baseStyles = 'group inline-flex items-center justify-center font-medium rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:pointer-events-none cursor-pointer';
 
   const sizeStyles = {
     sm: 'px-4 py-2 text-xs tracking-wide',
@@ -36,8 +37,8 @@ export default function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      whileHover={disabled ? {} : { scale: 1.02, y: -1 }}
-      whileTap={disabled ? {} : { scale: 0.98 }}
+      whileHover={disabled || prefersReducedMotion ? undefined : { scale: 1.03, y: -1 }}
+      whileTap={disabled || prefersReducedMotion ? undefined : { scale: 0.97 }}
       transition={{ duration: 0.15, ease: 'easeOut' }}
       className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
       {...props}
@@ -45,13 +46,7 @@ export default function Button({
       <span className="flex items-center gap-2">
         {children}
         {showArrow && (
-          <motion.span
-            initial={{ x: 0 }}
-            whileHover={{ x: 3 }}
-            transition={{ duration: 0.15 }}
-          >
-            <ArrowRight className="w-4 h-4" />
-          </motion.span>
+          <ArrowRight className="w-4 h-4 transition-transform duration-150 group-hover:translate-x-0.5" />
         )}
       </span>
     </motion.button>

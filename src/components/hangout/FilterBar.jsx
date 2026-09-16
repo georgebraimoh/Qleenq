@@ -56,7 +56,7 @@ export default function FilterBar({
                   key={radius}
                   type="button"
                   onClick={() => setDistanceRadius(radius)}
-                  className={`px-3 py-1.5 rounded-full font-semibold transition-all shrink-0 cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-full font-semibold transition-all shrink-0 cursor-pointer pressable ${
                     isActive
                       ? 'bg-[#171717] text-white shadow-xs'
                       : 'bg-white border border-[#EFE8DB] text-[#6F6F6F] hover:border-[#D6D2C9] hover:text-[#171717]'
@@ -72,7 +72,7 @@ export default function FilterBar({
             <button
               type="button"
               onClick={resetLocationFilter}
-              className="p-2 text-[#6F6F6F] hover:text-[#800020] transition-colors shrink-0 cursor-pointer"
+              className="p-2 text-[#6F6F6F] hover:text-[#800020] hover:rotate-180 transition-all duration-300 shrink-0 cursor-pointer pressable"
               title="Reset location filter"
             >
               <RefreshCw className="w-4 h-4" />

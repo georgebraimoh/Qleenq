@@ -14,7 +14,7 @@ export default function HostCard({ hostId }) {
           <img
             src={host.avatar}
             alt={host.name}
-            className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm hover:opacity-90 transition-opacity"
+            className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm hover:scale-105 transition-transform duration-200"
           />
         </Link>
         <div>
@@ -36,7 +36,7 @@ export default function HostCard({ hostId }) {
 
       <Link
         to={`/profile/${host.username}`}
-        className="px-4 py-2 text-xs font-semibold text-[#171717] bg-[#F7F6F2] hover:bg-[#E8E6E1] rounded-full transition-colors"
+        className="px-4 py-2 text-xs font-semibold text-[#171717] bg-[#F7F6F2] hover:bg-[#E8E6E1] rounded-full transition-colors pressable"
       >
         View profile
       </Link>

@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, MotionConfig } from 'framer-motion';
 
 import { UserProvider, useUser } from './context/UserContext';
 import { LeenQProvider } from './context/LeenQContext';
@@ -81,20 +81,22 @@ export default function App() {
       <UserProvider>
         <LocationProvider>
           <LeenQProvider>
-            <BrowserRouter>
-              <ScrollToTop />
-              <div className="min-h-screen flex flex-col justify-between bg-[#FAF4F5] font-sans selection:bg-[#800020]/20 selection:text-[#800020]">
-                <div>
-                  <Navbar />
-                  <main>
-                    <AnimatedRoutes />
-                  </main>
+            <MotionConfig reducedMotion="user">
+              <BrowserRouter>
+                <ScrollToTop />
+                <div className="min-h-screen flex flex-col justify-between bg-[#FAF4F5] font-sans selection:bg-[#800020]/20 selection:text-[#800020]">
+                  <div>
+                    <Navbar />
+                    <main>
+                      <AnimatedRoutes />
+                    </main>
+                  </div>
+                  <Footer />
+                  <MobileNav />
+                  <GlobalAuthModal />
                 </div>
-                <Footer />
-                <MobileNav />
-                <GlobalAuthModal />
-              </div>
-            </BrowserRouter>
+              </BrowserRouter>
+            </MotionConfig>
           </LeenQProvider>
         </LocationProvider>
       </UserProvider>

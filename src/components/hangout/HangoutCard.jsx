@@ -32,8 +32,8 @@ export default function HangoutCard({ hangout, featured = false }) {
       layout
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -5 }}
+      whileTap={{ scale: 0.985 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       className={`group editorial-card overflow-hidden flex flex-col justify-between cursor-pointer ${
@@ -41,19 +41,19 @@ export default function HangoutCard({ hangout, featured = false }) {
       }`}
     >
       {/* Cover Image Container */}
-      <div className={`relative overflow-hidden ${featured ? 'h-64 md:h-full' : 'h-52'}`}>
+      <div className={`relative overflow-hidden img-zoom ${featured ? 'h-64 md:h-full' : 'h-52'}`}>
         <img
           src={hangout.image}
           alt={hangout.title}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
         
         {/* Category Pill & Capacity */}
         <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
-          <span className="px-3 py-1 text-xs font-extrabold tracking-wider bg-[#171717] text-white rounded-full shadow-xs">
+          <span className="px-3 py-1 text-xs font-extrabold tracking-wider bg-[#171717] text-white rounded-full shadow-xs transition-transform duration-300 group-hover:-rotate-2">
             {hangout.category}
           </span>
           {isFull && (
@@ -65,7 +65,7 @@ export default function HangoutCard({ hangout, featured = false }) {
 
         {/* Distance Badge if available */}
         {distanceKm !== null && (
-          <div className="absolute top-4 right-4 z-10 bg-[#F4EFE6] text-[#171717] text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm border border-[#EFE8DB]">
+          <div className="absolute top-4 right-4 z-10 bg-[#F4EFE6] text-[#171717] text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm border border-[#EFE8DB] transition-transform duration-300 group-hover:scale-105">
             <Navigation className="w-3 h-3 text-[#800020] fill-[#800020]" />
             <span>{distanceKm} km away</span>
           </div>

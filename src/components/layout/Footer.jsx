@@ -35,19 +35,28 @@ export default function Footer() {
             <h4 className="text-xs font-bold text-[#171717] uppercase tracking-wider">Quick Navigation</h4>
             <ul className="space-y-2 text-xs text-[#6F6F6F]">
               <li>
-                <Link to="/explore" className="hover:text-[#800020] transition-colors flex items-center gap-1.5">
+                <Link
+                  to="/explore"
+                  className="hover:text-[#800020] transition-colors flex items-center gap-1.5 link-nudge"
+                >
                   <Compass className="w-3.5 h-3.5 text-[#800020]" />
                   <span>Explore Activities</span>
                 </Link>
               </li>
               <li>
-                <Link to="/create" className="hover:text-[#800020] transition-colors flex items-center gap-1.5">
+                <Link
+                  to="/create"
+                  className="hover:text-[#800020] transition-colors flex items-center gap-1.5 link-nudge"
+                >
                   <Plus className="w-3.5 h-3.5 text-[#800020]" />
                   <span>Host an Experience</span>
                 </Link>
               </li>
               <li>
-                <Link to="/safety" className="hover:text-[#800020] transition-colors flex items-center gap-1.5">
+                <Link
+                  to="/safety"
+                  className="hover:text-[#800020] transition-colors flex items-center gap-1.5 link-nudge"
+                >
                   <ShieldCheck className="w-3.5 h-3.5 text-[#2D5A27]" />
                   <span className="font-semibold text-[#171717]">Safety & Trust Guide</span>
                 </Link>
