@@ -71,11 +71,11 @@ export default function AuthModal({ isOpen, onClose, initialView = 'welcome' }) 
       <div className="space-y-6 text-center pt-2">
         {/* Header Branding */}
         <div className="space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-[#FF6B4A] flex items-center justify-center text-white mx-auto shadow-md">
+          <div className="w-12 h-12 rounded-2xl bg-[#800020] flex items-center justify-center text-white mx-auto shadow-md">
             <span className="font-heading font-extrabold text-2xl">Q</span>
           </div>
           <h2 className="text-2xl font-bold font-heading text-[#171717]">
-            Welcome to Qleen<span className="text-[#FF6B4A]">q</span>
+            Welcome to Qleen<span className="text-[#800020]">q</span>
           </h2>
           <p className="text-xs text-[#6F6F6F] max-w-xs mx-auto">
             Find your people. Find something to do anywhere in the world.
@@ -117,7 +117,7 @@ export default function AuthModal({ isOpen, onClose, initialView = 'welcome' }) 
               onClick={() => setView('signup')}
               className="w-full py-3 px-4 bg-stone-900 hover:bg-stone-800 text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer"
             >
-              <Mail className="w-4 h-4 text-[#FF6B4A]" />
+              <Mail className="w-4 h-4 text-[#800020]" />
               <span>Continue with Email</span>
             </button>
 
@@ -126,7 +126,7 @@ export default function AuthModal({ isOpen, onClose, initialView = 'welcome' }) 
               <button
                 type="button"
                 onClick={() => setView('login')}
-                className="text-[#FF6B4A] font-bold hover:underline cursor-pointer"
+                className="text-[#800020] font-bold hover:underline cursor-pointer"
               >
                 Sign in
               </button>

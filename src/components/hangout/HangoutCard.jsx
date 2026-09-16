@@ -57,7 +57,7 @@ export default function HangoutCard({ hangout, featured = false }) {
             {hangout.category}
           </span>
           {isFull && (
-            <span className="px-3 py-1 text-xs font-extrabold tracking-wider uppercase bg-[#E2522B] text-white rounded-full shadow-xs">
+            <span className="px-3 py-1 text-xs font-extrabold tracking-wider uppercase bg-[#800020] text-white rounded-full shadow-xs">
               Full Capacity
             </span>
           )}
@@ -66,14 +66,14 @@ export default function HangoutCard({ hangout, featured = false }) {
         {/* Distance Badge if available */}
         {distanceKm !== null && (
           <div className="absolute top-4 right-4 z-10 bg-[#F4EFE6] text-[#171717] text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm border border-[#EFE8DB]">
-            <Navigation className="w-3 h-3 text-[#E2522B] fill-[#E2522B]" />
+            <Navigation className="w-3 h-3 text-[#800020] fill-[#800020]" />
             <span>{distanceKm} km away</span>
           </div>
         )}
 
         {/* Date Tag */}
         <div className="absolute bottom-4 left-4 z-10 text-white text-xs font-bold flex items-center gap-1.5 drop-shadow-md">
-          <Calendar className="w-3.5 h-3.5 text-[#E2522B]" />
+          <Calendar className="w-3.5 h-3.5 text-[#800020]" />
           <span>{formattedDate} · {hangout.time}</span>
         </div>
       </div>
@@ -82,11 +82,11 @@ export default function HangoutCard({ hangout, featured = false }) {
       <div className="p-6 flex flex-col justify-between flex-1 space-y-4">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-[#6F6F6F] mb-2">
-            <MapPin className="w-3.5 h-3.5 text-[#E2522B] shrink-0" />
+            <MapPin className="w-3.5 h-3.5 text-[#800020] shrink-0" />
             <span className="truncate">{locObj.placeName} · {locObj.city}, {locObj.country}</span>
           </div>
 
-          <h3 className="text-xl font-bold font-heading text-[#171717] group-hover:text-[#E2522B] transition-colors line-clamp-2 leading-tight">
+          <h3 className="text-xl font-bold font-heading text-[#171717] group-hover:text-[#800020] transition-colors line-clamp-2 leading-tight">
             {hangout.title}
           </h3>
 
@@ -106,7 +106,7 @@ export default function HangoutCard({ hangout, featured = false }) {
 
           <Link
             to={`/hangout/${hangout.id}`}
-            className="w-9 h-9 rounded-full bg-[#FFF7EC] border border-[#EFE8DB] group-hover:bg-[#E2522B] group-hover:border-[#E2522B] group-hover:text-white text-[#171717] flex items-center justify-center transition-all duration-200 shadow-xs"
+            className="w-9 h-9 rounded-full bg-[#FAF4F5] border border-[#EFE8DB] group-hover:bg-[#800020] group-hover:border-[#800020] group-hover:text-white text-[#171717] flex items-center justify-center transition-all duration-200 shadow-xs"
             aria-label={`View details for ${hangout.title}`}
           >
             <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

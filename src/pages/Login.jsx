@@ -70,7 +70,7 @@ export default function Login() {
         <div className="max-w-md w-full bg-white border border-[#E8E6E1] rounded-3xl p-8 shadow-xl space-y-6">
           <div className="text-center space-y-2">
             <Link to="/" className="inline-flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-2xl bg-[#FF6B4A] flex items-center justify-center text-white font-heading font-extrabold text-xl shadow-md">
+              <div className="w-10 h-10 rounded-2xl bg-[#800020] flex items-center justify-center text-white font-heading font-extrabold text-xl shadow-md">
                 Q
               </div>
             </Link>

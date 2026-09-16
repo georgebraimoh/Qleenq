@@ -12,7 +12,7 @@ export default function FormField({
     <div className={`space-y-1.5 ${className}`}>
       {label && (
         <label className="block text-xs font-semibold text-[#171717] tracking-wider uppercase">
-          {label} {required && <span className="text-[#FF6B4A]">*</span>}
+          {label} {required && <span className="text-[#800020]">*</span>}
         </label>
       )}
       {children}

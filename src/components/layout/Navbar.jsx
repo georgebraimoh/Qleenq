@@ -46,7 +46,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-30 bg-[#FFF7EC]/90 backdrop-blur-md border-b border-[#EFE8DB] transition-all">
+    <header className="sticky top-0 z-30 bg-[#FAF4F5]/90 backdrop-blur-md border-b border-[#EFE8DB] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         {/* Brand Logo & Active Location Indicator */}
         <div className="flex items-center gap-4">
@@ -54,13 +54,13 @@ export default function Navbar() {
             <motion.div
               whileHover={{ scale: 1.08, rotate: -3 }}
               whileTap={{ scale: 0.95 }}
-              className="w-10 h-10 rounded-2xl bg-[#E2522B] flex items-center justify-center text-white shadow-md shadow-[#E2522B]/25"
+              className="w-10 h-10 rounded-2xl bg-[#800020] flex items-center justify-center text-white shadow-md shadow-[#800020]/25"
             >
               <span className="font-heading font-extrabold text-xl tracking-tighter">Q</span>
             </motion.div>
             <div>
               <span className="font-heading font-extrabold text-2xl tracking-tight text-[#171717]">
-                Qleen<span className="text-[#E2522B]">q</span>
+                Qleen<span className="text-[#800020]">q</span>
               </span>
             </div>
           </Link>
@@ -73,7 +73,7 @@ export default function Navbar() {
             className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#F4EFE6] border border-[#EFE8DB] text-[#171717] font-bold rounded-full text-xs shadow-xs cursor-pointer transition-transform"
             title="Location Discovery"
           >
-            <MapPin className="w-3.5 h-3.5 text-[#E2522B]" />
+            <MapPin className="w-3.5 h-3.5 text-[#800020]" />
             <span className="max-w-[140px] truncate">{activePlaceName}</span>
           </motion.button>
         </div>
@@ -90,7 +90,7 @@ export default function Navbar() {
                 to={item.path}
                 onClick={item.onClick}
                 className={`relative px-4 py-2 text-sm font-bold transition-colors flex items-center gap-1.5 z-10 ${
-                  isActive ? 'text-[#E2522B]' : 'text-[#6F6F6F] hover:text-[#171717]'
+                  isActive ? 'text-[#800020]' : 'text-[#6F6F6F] hover:text-[#171717]'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -98,7 +98,7 @@ export default function Navbar() {
                 {isActive && (
                   <motion.div
                     layoutId="navbarActiveIndicator"
-                    className="absolute inset-0 bg-[#E2522B]/10 rounded-full -z-10"
+                    className="absolute inset-0 bg-[#800020]/10 rounded-full -z-10"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
@@ -154,7 +154,7 @@ export default function Navbar() {
                       onClick={() => setDropdownOpen(false)}
                       className="flex items-center gap-2 px-4 py-2.5 hover:bg-[#F7F6F2] text-[#171717] font-semibold transition-colors"
                     >
-                      <User className="w-4 h-4 text-[#E2522B]" />
+                      <User className="w-4 h-4 text-[#800020]" />
                       <span>My Profile</span>
                     </Link>
 

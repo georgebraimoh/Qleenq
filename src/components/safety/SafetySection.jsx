@@ -72,7 +72,7 @@ export default function SafetySection() {
           <Link to="/safety" className="shrink-0">
             <Button variant="outline" size="md" className="gap-2">
               <span>Read safety guide</span>
-              <ArrowRight className="w-4 h-4 text-[#FF6B4A]" />
+              <ArrowRight className="w-4 h-4 text-[#800020]" />
             </Button>
           </Link>
         </div>
@@ -89,20 +89,20 @@ export default function SafetySection() {
                 onClick={() => setExpandedId(isExpanded ? null : tip.id)}
                 className={`p-5 rounded-2xl border transition-all cursor-pointer ${
                   isExpanded
-                    ? 'border-[#FF6B4A] bg-[#FFF0ED]/40 shadow-sm'
+                    ? 'border-[#800020] bg-[#FDF0F2]/40 shadow-sm'
                     : 'border-[#E8E6E1] bg-[#F7F6F2] hover:border-[#D6D2C9]'
                 }`}
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#FFF0ED] text-[#FF6B4A] flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-[#FDF0F2] text-[#800020] flex items-center justify-center shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <h3 className="font-heading font-bold text-sm text-[#171717]">
                       {tip.title}
                     </h3>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-[#6F6F6F] transition-transform ${isExpanded ? 'rotate-180 text-[#FF6B4A]' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-[#6F6F6F] transition-transform ${isExpanded ? 'rotate-180 text-[#800020]' : ''}`} />
                 </div>
 
                 <p className="text-xs text-[#6F6F6F] mt-2 font-medium leading-relaxed">

@@ -36,7 +36,7 @@ export default function ChatMessage({ message, isOwnMessage }) {
         <div
           className={`p-3.5 rounded-2xl text-sm leading-relaxed ${
             isOwnMessage
-              ? 'bg-[#FF6B4A] text-white rounded-tr-xs shadow-xs'
+              ? 'bg-[#800020] text-white rounded-tr-xs shadow-xs'
               : 'bg-white text-[#171717] border border-[#E8E6E1] rounded-tl-xs shadow-xs'
           }`}
         >

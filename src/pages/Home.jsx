@@ -55,7 +55,7 @@ export default function Home() {
                   }}
                   className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F4EFE6] border border-[#EFE8DB] text-[#171717] text-xs font-bold shadow-xs"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-[#E2522B]" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#800020]" />
                   <span>Real-World Meetups · Zero Pressure</span>
                 </motion.div>
 
@@ -67,10 +67,10 @@ export default function Home() {
                   className="text-4xl sm:text-6xl lg:text-7xl font-extrabold font-['Bricolage_Grotesque',sans-serif] text-[#171717] tracking-tight leading-[1.05]"
                 >
                   Find your people. <br />
-                  <span className="relative inline-block text-[#E2522B]">
+                  <span className="relative inline-block text-[#800020]">
                     Find something to do.
                     <svg
-                      className="absolute left-0 -bottom-2.5 w-full h-3 text-[#E2522B]/80 overflow-visible"
+                      className="absolute left-0 -bottom-2.5 w-full h-3 text-[#800020]/80 overflow-visible"
                       viewBox="0 0 300 12"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +178,7 @@ export default function Home() {
                     </div>
 
                     <div className="space-y-2">
-                      <div className="flex items-center text-xs text-[#FF6B4A] font-semibold gap-1">
+                      <div className="flex items-center text-xs text-[#800020] font-semibold gap-1">
                         <MapPin className="w-3.5 h-3.5" /> Jabi Lake Park, Abuja
                       </div>
                       <h3 className="text-lg font-bold font-heading text-[#171717]">Jabi Lake Sunset Kayaking</h3>
@@ -196,7 +196,7 @@ export default function Home() {
                     transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                     className="editorial-card p-4 bg-stone-900 text-white shadow-2xl rounded-2xl hidden sm:block absolute -top-8 -right-6 z-20 max-w-[240px]"
                   >
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#FF6B4A] bg-[#FF6B4A]/20 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#800020] bg-[#800020]/20 px-2 py-0.5 rounded-full">
                       Photography
                     </span>
                     <h4 className="font-heading font-bold text-sm text-white mt-2">Shoreditch Vintage Walk</h4>
@@ -212,12 +212,12 @@ export default function Home() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#FF6B4A]">Live Activities</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Live Activities</span>
               <h2 className="text-3xl md:text-4xl font-bold font-heading text-[#171717] mt-1">
                 Experiences happening near real places
               </h2>
             </div>
-            <Link to="/explore" className="text-sm font-semibold text-[#FF6B4A] hover:underline flex items-center gap-1">
+            <Link to="/explore" className="text-sm font-semibold text-[#800020] hover:underline flex items-center gap-1">
               <span>View all activities</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
@@ -245,7 +245,7 @@ export default function Home() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white border border-[#EFE8DB] rounded-3xl p-8 md:p-12 shadow-xs space-y-8">
             <div className="text-center max-w-xl mx-auto">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#E2522B]">Explore by Interest</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Explore by Interest</span>
               <h2 className="text-3xl font-extrabold font-['Bricolage_Grotesque',sans-serif] text-[#171717] mt-1">
                 You might enjoy
               </h2>
@@ -259,7 +259,7 @@ export default function Home() {
                 <Link
                   key={cat.id}
                   to={`/explore?category=${cat.id}`}
-                  className="p-4 rounded-2xl bg-[#FFF7EC] border border-[#EFE8DB] hover:bg-[#E2522B] hover:text-white group transition-all duration-200 text-center flex flex-col items-center justify-center space-y-2 cursor-pointer shadow-xs"
+                  className="p-4 rounded-2xl bg-[#FAF4F5] border border-[#EFE8DB] hover:bg-[#800020] hover:text-white group transition-all duration-200 text-center flex flex-col items-center justify-center space-y-2 cursor-pointer shadow-xs"
                 >
                   <span className="text-2xl">{cat.emoji}</span>
                   <span className="text-xs font-bold font-heading text-[#171717] group-hover:text-white transition-colors">
@@ -275,7 +275,7 @@ export default function Home() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden bg-stone-900 text-white rounded-3xl p-8 md:p-16 shadow-2xl">
             <div className="relative z-10 max-w-3xl space-y-6">
-              <div className="w-12 h-12 rounded-2xl bg-[#E2522B] flex items-center justify-center text-white">
+              <div className="w-12 h-12 rounded-2xl bg-[#800020] flex items-center justify-center text-white">
                 <Sparkles className="w-6 h-6" />
               </div>
 
@@ -289,19 +289,19 @@ export default function Home() {
 
               <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-stone-400">
                 <span className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-[#FF6B4A]" /> No Swiping Algorithms
+                  <Shield className="w-4 h-4 text-[#800020]" /> No Swiping Algorithms
                 </span>
                 <span className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-[#FF6B4A]" /> Location-First Architecture
+                  <Globe className="w-4 h-4 text-[#800020]" /> Location-First Architecture
                 </span>
                 <span className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-[#FF6B4A]" /> Temporary Event Rooms
+                  <Users className="w-4 h-4 text-[#800020]" /> Temporary Event Rooms
                 </span>
               </div>
             </div>
 
             {/* Decorative background glow */}
-            <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-[#FF6B4A]/20 rounded-full blur-3xl" />
+            <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-[#800020]/20 rounded-full blur-3xl" />
           </div>
         </section>
 
@@ -310,7 +310,7 @@ export default function Home() {
 
         {/* SECTION 4: FINAL CTA */}
         <section className="max-w-4xl mx-auto px-4 text-center space-y-6 pt-8">
-          <div className="bg-[#FFF0ED] border border-[#FF6B4A]/20 rounded-3xl p-10 md:p-14 space-y-6">
+          <div className="bg-[#FDF0F2] border border-[#800020]/20 rounded-3xl p-10 md:p-14 space-y-6">
             <h2 className="text-3xl md:text-4xl font-extrabold font-heading text-[#171717]">
               Ready to go somewhere?
             </h2>

@@ -23,11 +23,11 @@ export default function Button({
   };
 
   const variantStyles = {
-    primary: 'bg-[#E2522B] text-white hover:bg-[#C8421D] focus:ring-[#E2522B]/40 shadow-sm shadow-[#E2522B]/20 font-bold',
-    secondary: 'bg-[#F4EFE6] text-[#171717] hover:bg-[#EAE4D8] focus:ring-[#E2522B]/20 border border-[#EFE8DB] font-bold',
+    primary: 'bg-[#800020] text-white hover:bg-[#5E0017] focus:ring-[#800020]/40 shadow-sm shadow-[#800020]/20 font-bold',
+    secondary: 'bg-[#F4EFE6] text-[#171717] hover:bg-[#EAE4D8] focus:ring-[#800020]/20 border border-[#EFE8DB] font-bold',
     dark: 'bg-[#171717] text-white hover:bg-neutral-800 focus:ring-neutral-900 font-bold',
-    outline: 'border border-[#EFE8DB] bg-white text-[#171717] hover:bg-[#FFF7EC] hover:border-[#171717]/30 focus:ring-neutral-400 font-bold',
-    ghost: 'bg-transparent text-[#171717] hover:bg-[#FFF7EC] focus:ring-neutral-300 font-bold',
+    outline: 'border border-[#EFE8DB] bg-white text-[#171717] hover:bg-[#FAF4F5] hover:border-[#171717]/30 focus:ring-neutral-400 font-bold',
+    ghost: 'bg-transparent text-[#171717] hover:bg-[#FAF4F5] focus:ring-neutral-300 font-bold',
     danger: 'bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500/30 font-bold'
   };
 

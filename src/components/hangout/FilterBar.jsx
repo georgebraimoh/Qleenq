@@ -72,7 +72,7 @@ export default function FilterBar({
             <button
               type="button"
               onClick={resetLocationFilter}
-              className="p-2 text-[#6F6F6F] hover:text-[#E2522B] transition-colors shrink-0 cursor-pointer"
+              className="p-2 text-[#6F6F6F] hover:text-[#800020] transition-colors shrink-0 cursor-pointer"
               title="Reset location filter"
             >
               <RefreshCw className="w-4 h-4" />

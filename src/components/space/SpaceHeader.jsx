@@ -30,11 +30,11 @@ export default function SpaceHeader({ hangout }) {
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold tracking-widest uppercase text-[#FF6B4A] bg-[#FFF0ED] px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold tracking-widest uppercase text-[#800020] bg-[#FDF0F2] px-2 py-0.5 rounded-full">
                 Qleenq Space
               </span>
               <span className="text-xs text-[#6F6F6F] flex items-center gap-1">
-                <MapPin className="w-3 h-3 text-[#FF6B4A]" /> {locObj.placeName || locObj.city}
+                <MapPin className="w-3 h-3 text-[#800020]" /> {locObj.placeName || locObj.city}
               </span>
             </div>
             <h1 className="text-lg md:text-xl font-bold font-heading text-[#171717] leading-tight">

@@ -44,7 +44,7 @@ export default function HangoutSpace() {
     return (
       <PageTransition key="space-loading">
         <div className="max-w-md mx-auto p-10 text-center space-y-4 my-10">
-          <div className="w-8 h-8 border-4 border-[#FF6B4A] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-4 border-[#800020] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs font-semibold text-[#6F6F6F]">Checking space access...</p>
         </div>
       </PageTransition>
@@ -69,12 +69,12 @@ export default function HangoutSpace() {
       <PageTransition key="space-locked">
         <div className="min-h-[80vh] flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-white border border-[#E8E6E1] rounded-3xl p-8 text-center space-y-6 shadow-xl">
-            <div className="w-16 h-16 rounded-full bg-[#FFF0ED] text-[#FF6B4A] flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 rounded-full bg-[#FDF0F2] text-[#800020] flex items-center justify-center mx-auto">
               <Lock className="w-8 h-8" />
             </div>
 
             <div className="space-y-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#FF6B4A]">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">
                 Qleenq Space Access
               </span>
               <h2 className="text-2xl font-bold font-heading text-[#171717]">

@@ -101,7 +101,7 @@ export default function Explore() {
         {/* Header Section */}
         <div className="space-y-4 max-w-3xl">
           <h1 className="text-4xl sm:text-5xl font-extrabold font-heading text-[#171717] tracking-tight">
-            What's happening <span className="text-[#FF6B4A]">{locationTitle}?</span>
+            What's happening <span className="text-[#800020]">{locationTitle}?</span>
           </h1>
 
           <p className="text-base text-[#6F6F6F] leading-relaxed">
@@ -125,7 +125,7 @@ export default function Explore() {
           {isFiltered && (
             <button
               onClick={handleResetFilters}
-              className="text-[#FF6B4A] hover:underline font-semibold cursor-pointer flex items-center gap-1"
+              className="text-[#800020] hover:underline font-semibold cursor-pointer flex items-center gap-1"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Reset all filters</span>

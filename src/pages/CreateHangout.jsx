@@ -157,7 +157,7 @@ export default function CreateHangout() {
               </div>
 
               <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-[#FF6B4A]">Success</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Success</span>
                 <h2 className="text-3xl font-bold font-heading text-[#171717]">
                   Your activity is live.
                 </h2>
@@ -167,7 +167,7 @@ export default function CreateHangout() {
               </div>
 
               <div className="p-4 bg-[#F7F6F2] rounded-2xl max-w-sm mx-auto text-left space-y-1 border border-[#E8E6E1]">
-                <p className="text-xs font-bold uppercase text-[#FF6B4A]">{createdActivity.category}</p>
+                <p className="text-xs font-bold uppercase text-[#800020]">{createdActivity.category}</p>
                 <h4 className="font-bold text-[#171717] font-heading">{createdActivity.title}</h4>
                 <p className="text-xs text-[#6F6F6F]">
                   📍 {createdActivity.location?.placeName || 'Venue'} · {createdActivity.date} at {createdActivity.time}
@@ -204,7 +204,7 @@ export default function CreateHangout() {
             /* FORM SECTION */
             <div className="space-y-8">
               <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-[#FF6B4A]">Host an experience</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Host an experience</span>
                 <h1 className="text-3xl sm:text-4xl font-extrabold font-heading text-[#171717]">
                   What are you getting people together for?
                 </h1>
@@ -224,7 +224,7 @@ export default function CreateHangout() {
                     value={formData.title}
                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                     placeholder="e.g. Sunset Photowalk, Board Games & Suya, Rooftop Catan..."
-                    className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+                    className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
                   />
                 </FormField>
 
@@ -242,7 +242,7 @@ export default function CreateHangout() {
                   <select
                     value={formData.category}
                     onChange={e => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+                    className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
                   >
                     {CATEGORIES.filter(c => c.id !== 'all').map(cat => (
                       <option key={cat.id} value={cat.id}>{cat.label}</option>
@@ -257,7 +257,7 @@ export default function CreateHangout() {
                       type="date"
                       value={formData.date}
                       onChange={e => setFormData({ ...formData, date: e.target.value })}
-                      className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+                      className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
                     />
                   </FormField>
 
@@ -266,7 +266,7 @@ export default function CreateHangout() {
                       type="time"
                       value={formData.time}
                       onChange={e => setFormData({ ...formData, time: e.target.value })}
-                      className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+                      className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
                     />
                   </FormField>
 
@@ -277,7 +277,7 @@ export default function CreateHangout() {
                       max="50"
                       value={formData.maxAttendees}
                       onChange={e => setFormData({ ...formData, maxAttendees: e.target.value })}
-                      className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+                      className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
                     />
                   </FormField>
                 </div>
@@ -289,7 +289,7 @@ export default function CreateHangout() {
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Provide details about the meeting point, activities, vibes..."
-                    className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+                    className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
                   />
                 </FormField>
 
@@ -298,8 +298,8 @@ export default function CreateHangout() {
                   <div className="space-y-4 pt-1">
                     {/* Device Upload Control */}
                     <div className="flex flex-wrap items-center gap-3">
-                      <label className="px-4 py-2.5 bg-white border border-[#E8E6E1] hover:border-[#FF6B4A] hover:text-[#FF6B4A] rounded-2xl text-xs font-semibold text-[#171717] flex items-center gap-2 transition-all shadow-xs cursor-pointer">
-                        <Upload className="w-4 h-4 text-[#FF6B4A]" />
+                      <label className="px-4 py-2.5 bg-white border border-[#E8E6E1] hover:border-[#800020] hover:text-[#800020] rounded-2xl text-xs font-semibold text-[#171717] flex items-center gap-2 transition-all shadow-xs cursor-pointer">
+                        <Upload className="w-4 h-4 text-[#800020]" />
                         <span>Upload photo from device</span>
                         <input
                           type="file"
@@ -330,9 +330,9 @@ export default function CreateHangout() {
 
                     {/* Custom Image Preview */}
                     {customImagePreview ? (
-                      <div className="relative h-40 rounded-2xl overflow-hidden border-2 border-[#FF6B4A] max-w-md shadow-md">
+                      <div className="relative h-40 rounded-2xl overflow-hidden border-2 border-[#800020] max-w-md shadow-md">
                         <img src={customImagePreview} alt="Custom cover preview" className="w-full h-full object-cover" />
-                        <div className="absolute top-2 right-2 bg-[#FF6B4A] text-white p-1 rounded-full shadow-xs">
+                        <div className="absolute top-2 right-2 bg-[#800020] text-white p-1 rounded-full shadow-xs">
                           <CheckCircle className="w-4 h-4" />
                         </div>
                         <span className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold p-2 text-center truncate">
@@ -355,12 +355,12 @@ export default function CreateHangout() {
                                 setFormData({ ...formData, image: img.url });
                               }}
                               className={`relative h-20 rounded-xl overflow-hidden border-2 transition-colors cursor-pointer ${
-                                isSelected ? 'border-[#FF6B4A] shadow-md' : 'border-transparent opacity-75 hover:opacity-100'
+                                isSelected ? 'border-[#800020] shadow-md' : 'border-transparent opacity-75 hover:opacity-100'
                               }`}
                             >
                               <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
                               {isSelected && (
-                                <div className="absolute top-1 right-1 bg-[#FF6B4A] text-white p-0.5 rounded-full shadow-xs">
+                                <div className="absolute top-1 right-1 bg-[#800020] text-white p-0.5 rounded-full shadow-xs">
                                   <CheckCircle className="w-3.5 h-3.5" />
                                 </div>
                               )}

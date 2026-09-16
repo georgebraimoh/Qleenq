@@ -93,7 +93,7 @@ export default function ResetPassword() {
           {/* Header Branding */}
           <div className="text-center space-y-2">
             <Link to="/" className="inline-flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-2xl bg-[#E2522B] flex items-center justify-center text-white font-heading font-extrabold text-xl shadow-md">
+              <div className="w-10 h-10 rounded-2xl bg-[#800020] flex items-center justify-center text-white font-heading font-extrabold text-xl shadow-md">
                 Q
               </div>
             </Link>
@@ -157,7 +157,7 @@ export default function ResetPassword() {
                     }}
                     placeholder="Enter new password"
                     disabled={isLoading}
-                    className="w-full pl-10 pr-10 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B] disabled:opacity-50"
+                    className="w-full pl-10 pr-10 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020] disabled:opacity-50"
                   />
                   <button
                     type="button"
@@ -183,7 +183,7 @@ export default function ResetPassword() {
                     }}
                     placeholder="Confirm new password"
                     disabled={isLoading}
-                    className="w-full pl-10 pr-10 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B] disabled:opacity-50"
+                    className="w-full pl-10 pr-10 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020] disabled:opacity-50"
                   />
                   <button
                     type="button"
@@ -210,7 +210,7 @@ export default function ResetPassword() {
                 <button
                   type="button"
                   onClick={handleReturnToLogin}
-                  className="text-xs text-[#6F6F6F] hover:text-[#E2522B] font-semibold cursor-pointer transition-colors"
+                  className="text-xs text-[#6F6F6F] hover:text-[#800020] font-semibold cursor-pointer transition-colors"
                 >
                   Return to sign in
                 </button>

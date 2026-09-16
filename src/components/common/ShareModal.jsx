@@ -64,7 +64,7 @@ export default function ShareModal({ isOpen, onClose, hangout }) {
             className="w-16 h-16 rounded-xl object-cover shrink-0"
           />
           <div className="min-w-0">
-            <span className="text-[10px] uppercase font-bold text-[#FF6B4A] tracking-wider">
+            <span className="text-[10px] uppercase font-bold text-[#800020] tracking-wider">
               {hangout.category}
             </span>
             <h4 className="font-heading font-bold text-sm text-[#171717] truncate">

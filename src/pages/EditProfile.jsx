@@ -137,7 +137,7 @@ export default function EditProfile() {
         </button>
 
         <div className="space-y-2">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#E2522B]">Account Settings</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Account Settings</span>
           <h1 className="text-3xl font-extrabold font-heading text-[#171717]">
             Edit Profile
           </h1>
@@ -156,7 +156,7 @@ export default function EditProfile() {
             <div className="space-y-4 pt-1">
               {/* Active Avatar Preview & Device Upload Button */}
               <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#E2522B] shadow-sm shrink-0">
+                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#800020] shadow-sm shrink-0">
                   <img
                     src={customAvatarPreview || formData.avatar}
                     alt="Current avatar preview"
@@ -165,8 +165,8 @@ export default function EditProfile() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="px-3.5 py-2 bg-[#F7F6F2] border border-[#E8E6E1] hover:border-[#E2522B] hover:text-[#E2522B] rounded-xl text-xs font-semibold text-[#171717] inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs">
-                    <Upload className="w-3.5 h-3.5 text-[#E2522B]" />
+                  <label className="px-3.5 py-2 bg-[#F7F6F2] border border-[#E8E6E1] hover:border-[#800020] hover:text-[#800020] rounded-xl text-xs font-semibold text-[#171717] inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs">
+                    <Upload className="w-3.5 h-3.5 text-[#800020]" />
                     <span>Upload photo from device</span>
                     <input
                       type="file"
@@ -210,7 +210,7 @@ export default function EditProfile() {
                           setFormData({ ...formData, avatar: url });
                         }}
                         className={`relative w-12 h-12 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
-                          isSelected ? 'border-[#E2522B] ring-2 ring-[#E2522B]/30 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
+                          isSelected ? 'border-[#800020] ring-2 ring-[#800020]/30 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
                         }`}
                       >
                         <img src={url} alt="Avatar option" className="w-full h-full object-cover" />
@@ -229,7 +229,7 @@ export default function EditProfile() {
                 type="text"
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B]"
+                className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
               />
             </FormField>
 
@@ -239,7 +239,7 @@ export default function EditProfile() {
                 value={formData.title}
                 onChange={e => setFormData({ ...formData, title: e.target.value })}
                 placeholder="e.g. Web Developer, Architect..."
-                className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B]"
+                className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
               />
             </FormField>
           </div>
@@ -251,7 +251,7 @@ export default function EditProfile() {
               value={formData.location}
               onChange={e => setFormData({ ...formData, location: e.target.value })}
               placeholder="e.g. Wuse 2, Abuja"
-              className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B]"
+              className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
             />
           </FormField>
 
@@ -261,7 +261,7 @@ export default function EditProfile() {
               rows="3"
               value={formData.bio}
               onChange={e => setFormData({ ...formData, bio: e.target.value })}
-              className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B]"
+              className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
             />
           </FormField>
 
@@ -277,7 +277,7 @@ export default function EditProfile() {
                     onClick={() => toggleInterest(interest)}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-[#E2522B] text-white shadow-xs'
+                        ? 'bg-[#800020] text-white shadow-xs'
                         : 'bg-[#F7F6F2] text-[#6F6F6F] border border-[#E8E6E1] hover:text-[#171717]'
                     }`}
                   >

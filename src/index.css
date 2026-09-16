@@ -5,8 +5,8 @@
     --bg-canvas: #F7F6F2;
     --text-primary: #171717;
     --text-secondary: #6F6F6F;
-    --accent-primary: #E2522B;
-    --accent-hover: #E85535;
+    --accent-primary: #800020;
+    --accent-hover: #69001A;
     --accent-sage: #E8F0E8;
     --surface-card: #FFFFFF;
     --border-color: #E8E6E1;
@@ -61,8 +61,8 @@
 }
 
 .badge-terracotta {
-  background-color: #FFF0ED;
-  color: #E2522B;
+  background-color: #FDF0F2;
+  color: #800020;
 }
 
 /* Smooth hide scrollbars for horizontal chip bars */

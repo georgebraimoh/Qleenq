@@ -17,7 +17,7 @@ export default function EmptyState({
       animate={{ opacity: 1, y: 0 }}
       className={`p-10 text-center bg-white border border-[#E8E6E1] rounded-3xl flex flex-col items-center max-w-md mx-auto my-6 ${className}`}
     >
-      <div className="w-16 h-16 rounded-full bg-[#FFF0ED] text-[#FF6B4A] flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-[#FDF0F2] text-[#800020] flex items-center justify-center mb-4">
         <Icon className="w-8 h-8" />
       </div>
       <h3 className="text-xl font-bold font-heading text-[#171717] mb-2">{title}</h3>

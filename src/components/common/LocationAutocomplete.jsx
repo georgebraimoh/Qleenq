@@ -73,7 +73,7 @@ export default function LocationAutocomplete({
   return (
     <div ref={wrapperRef} className="relative w-full">
       <div className="relative flex items-center">
-        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#E2522B]">
+        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#800020]">
           <MapPin className="w-4 h-4" />
         </div>
 
@@ -88,7 +88,7 @@ export default function LocationAutocomplete({
             }
           }}
           placeholder={placeholder}
-          className="w-full pl-10 pr-24 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm text-[#171717] placeholder-[#6F6F6F] focus:outline-none focus:bg-white focus:border-[#E2522B] shadow-xs transition-all"
+          className="w-full pl-10 pr-24 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm text-[#171717] placeholder-[#6F6F6F] focus:outline-none focus:bg-white focus:border-[#800020] shadow-xs transition-all"
         />
 
         <div className="absolute inset-y-0 right-0 pr-2 flex items-center gap-1">
@@ -106,13 +106,13 @@ export default function LocationAutocomplete({
             type="button"
             onClick={handleUseCurrentLocation}
             disabled={isLocating}
-            className="px-2.5 py-1.5 bg-white border border-[#E8E6E1] hover:border-[#E2522B] text-[#171717] hover:text-[#E2522B] rounded-xl text-xs font-semibold flex items-center gap-1 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+            className="px-2.5 py-1.5 bg-white border border-[#E8E6E1] hover:border-[#800020] text-[#171717] hover:text-[#800020] rounded-xl text-xs font-semibold flex items-center gap-1 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
             title="Use my current location"
           >
             {isLocating ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-[#E2522B]" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-[#800020]" />
             ) : (
-              <Navigation className="w-3.5 h-3.5 text-[#E2522B]" />
+              <Navigation className="w-3.5 h-3.5 text-[#800020]" />
             )}
             <span className="hidden sm:inline">Near me</span>
           </button>
@@ -133,7 +133,7 @@ export default function LocationAutocomplete({
             <button
               type="button"
               onClick={handleUseCurrentLocation}
-              className="w-full px-4 py-3 bg-[#FDF0EC] hover:bg-[#FBDEC6] text-[#E2522B] text-xs font-bold text-left flex items-center gap-2 border-b border-[#E8E6E1] transition-colors cursor-pointer"
+              className="w-full px-4 py-3 bg-[#FDF0F2] hover:bg-[#F5D6DA] text-[#800020] text-xs font-bold text-left flex items-center gap-2 border-b border-[#E8E6E1] transition-colors cursor-pointer"
             >
               <Navigation className="w-4 h-4 shrink-0" />
               <span>Use my current location (GPS)</span>
@@ -150,7 +150,7 @@ export default function LocationAutocomplete({
                   <p className="text-xs font-bold text-[#171717] font-heading">{place.placeName}</p>
                   <p className="text-[10px] text-[#6F6F6F]">{place.address} · {place.city}, {place.country}</p>
                 </div>
-                <span className="text-[10px] font-semibold text-[#E2522B] bg-[#FDF0EC] px-2 py-0.5 rounded-full shrink-0">
+                <span className="text-[10px] font-semibold text-[#800020] bg-[#FDF0F2] px-2 py-0.5 rounded-full shrink-0">
                   {place.city}
                 </span>
               </button>

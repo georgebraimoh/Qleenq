@@ -31,7 +31,7 @@ function PageFallback() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-8">
       <div className="text-center space-y-3">
-        <div className="w-8 h-8 border-4 border-[#FF6B4A] border-t-transparent rounded-full animate-spin mx-auto" />
+        <div className="w-8 h-8 border-4 border-[#800020] border-t-transparent rounded-full animate-spin mx-auto" />
         <p className="text-xs font-semibold text-[#6F6F6F]">Loading Qleenq...</p>
       </div>
     </div>
@@ -83,7 +83,7 @@ export default function App() {
           <LeenQProvider>
             <BrowserRouter>
               <ScrollToTop />
-              <div className="min-h-screen flex flex-col justify-between bg-[#FFF7EC] font-sans selection:bg-[#E2522B]/20 selection:text-[#E2522B]">
+              <div className="min-h-screen flex flex-col justify-between bg-[#FAF4F5] font-sans selection:bg-[#800020]/20 selection:text-[#800020]">
                 <div>
                   <Navbar />
                   <main>

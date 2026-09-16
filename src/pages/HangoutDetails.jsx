@@ -126,7 +126,7 @@ export default function HangoutDetails() {
               size="sm"
               className="gap-1.5"
             >
-              <Share2 className="w-3.5 h-3.5 text-[#FF6B4A]" />
+              <Share2 className="w-3.5 h-3.5 text-[#800020]" />
               <span>Share event</span>
             </Button>
 
@@ -163,7 +163,7 @@ export default function HangoutDetails() {
 
             <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
               <div className="flex items-center gap-2 text-xs font-medium text-amber-300">
-                <MapPin className="w-4 h-4 text-[#FF6B4A]" />
+                <MapPin className="w-4 h-4 text-[#800020]" />
                 <span>{locObj.placeName} · {locObj.city}, {locObj.country}</span>
                 {distanceKm !== null && (
                   <span className="bg-stone-900/80 px-2 py-0.5 rounded-full text-white text-[10px]">
@@ -185,7 +185,7 @@ export default function HangoutDetails() {
             {/* Quick Meta Info Box */}
             <div className="editorial-card p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#FFF0ED] text-[#FF6B4A] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-[#FDF0F2] text-[#800020] flex items-center justify-center shrink-0">
                   <Calendar className="w-5 h-5" />
                 </div>
                 <div>
@@ -195,7 +195,7 @@ export default function HangoutDetails() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#FFF0ED] text-[#FF6B4A] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-[#FDF0F2] text-[#800020] flex items-center justify-center shrink-0">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
@@ -205,7 +205,7 @@ export default function HangoutDetails() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#FFF0ED] text-[#FF6B4A] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-[#FDF0F2] text-[#800020] flex items-center justify-center shrink-0">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
@@ -218,7 +218,7 @@ export default function HangoutDetails() {
 
             {/* Description Section */}
             <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#FF6B4A]">About this activity</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#800020]">About this activity</h3>
               <p className="text-base text-[#171717] leading-relaxed whitespace-pre-line">
                 {hangout.description}
               </p>
@@ -229,7 +229,7 @@ export default function HangoutDetails() {
 
             {/* Host Profile Card */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#FF6B4A]">Organizer</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#800020]">Organizer</h3>
               <HostCard hostId={hangout.hostId} />
             </div>
 
@@ -237,18 +237,18 @@ export default function HangoutDetails() {
             <div className="space-y-4 pt-4 border-t border-[#E8E6E1]">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-[#FF6B4A]">Who's Going</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-[#800020]">Who's Going</h3>
                   <p className="text-sm font-bold text-[#171717] font-heading mt-0.5">
                     {hangout.attendeeIds.length} of {hangout.maxAttendees} confirmed attendees
                   </p>
                 </div>
-                <span className="text-xs font-bold text-[#FF6B4A]">{capacityPercentage}% Full</span>
+                <span className="text-xs font-bold text-[#800020]">{capacityPercentage}% Full</span>
               </div>
 
               {/* Progress gauge bar */}
               <div className="w-full h-2 bg-[#E8E6E1] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#FF6B4A] rounded-full transition-all duration-500"
+                  className="h-full bg-[#800020] rounded-full transition-all duration-500"
                   style={{ width: `${capacityPercentage}%` }}
                 />
               </div>
@@ -301,7 +301,7 @@ export default function HangoutDetails() {
                         key={hangout.maxAttendees - hangout.attendeeIds.length}
                         initial={{ opacity: 0, y: -6 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="font-bold text-[#FF6B4A]"
+                        className="font-bold text-[#800020]"
                       >
                         {hangout.maxAttendees - hangout.attendeeIds.length}
                       </motion.span>

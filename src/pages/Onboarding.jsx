@@ -57,14 +57,14 @@ export default function Onboarding() {
       <div className="max-w-xl mx-auto px-4 py-12 space-y-8">
         {/* Step Indicator */}
         <div className="flex items-center justify-between text-xs font-semibold text-[#6F6F6F]">
-          <span className="text-[#FF6B4A] uppercase font-bold tracking-widest">Setup your profile</span>
+          <span className="text-[#800020] uppercase font-bold tracking-widest">Setup your profile</span>
           <span>Step {step} of 3</span>
         </div>
 
         {/* Progress Bar */}
         <div className="w-full h-1.5 bg-[#E8E6E1] rounded-full overflow-hidden">
           <div
-            className="h-full bg-[#FF6B4A] transition-all duration-300"
+            className="h-full bg-[#800020] transition-all duration-300"
             style={{ width: `${(step / 3) * 100}%` }}
           />
         </div>
@@ -94,7 +94,7 @@ export default function Onboarding() {
                       key={idx}
                       onClick={() => setAvatar(url)}
                       className={`w-14 h-14 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
-                        avatar === url ? 'border-[#FF6B4A] ring-2 ring-[#FF6B4A]/30 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
+                        avatar === url ? 'border-[#800020] ring-2 ring-[#800020]/30 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
                       }`}
                     >
                       <img src={url} alt="Avatar option" className="w-full h-full object-cover" />
@@ -140,7 +140,7 @@ export default function Onboarding() {
                       onClick={() => toggleInterest(tag)}
                       className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-[#FF6B4A] text-white shadow-xs scale-105'
+                          ? 'bg-[#800020] text-white shadow-xs scale-105'
                           : 'bg-[#F7F6F2] text-[#6F6F6F] border border-[#E8E6E1] hover:text-[#171717]'
                       }`}
                     >
@@ -179,7 +179,7 @@ export default function Onboarding() {
                   value={bio}
                   onChange={e => setBio(e.target.value)}
                   placeholder="e.g. Always up for a weekend photowalk, coffee chat, or sunset kayaking..."
-                  className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+                  className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#800020]"
                 />
               </FormField>
 
