@@ -20,6 +20,7 @@ export function LeenQProvider({ children }) {
   });
 
   const [messagesMap, setMessagesMap] = useState({});
+  const [isHangoutsLoading, setIsHangoutsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -35,6 +36,8 @@ export function LeenQProvider({ children }) {
         }
       } catch (err) {
         console.error('Failed loading hangouts from Supabase:', err);
+      } finally {
+        if (isMounted) setIsHangoutsLoading(false);
       }
     };
 
@@ -83,34 +86,61 @@ export function LeenQProvider({ children }) {
   const subscribeToSpaceMessages = (hangoutId) => {
     if (!hangoutId) return () => {};
 
-    const channelName = `space:${hangoutId}`;
+    let channel = null;
+    let isCancelled = false;
 
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'hangout_messages',
-          filter: `hangout_id=eq.${hangoutId}`
-        },
-        (payload) => {
-          if (payload.new && payload.new.hangout_id === hangoutId) {
-            const formatted = hangoutService.formatMessage(payload.new);
-            addRealtimeMessage(hangoutId, formatted);
+    const initSubscription = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          supabase.realtime.setAuth(session.access_token);
+        }
+      } catch (err) {
+        console.warn('[Qleenq Realtime] Auth token sync notice:', err.message);
+      }
+
+      if (isCancelled) return;
+
+      const channelName = `space:${hangoutId}`;
+
+      channel = supabase
+        .channel(channelName)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'hangout_messages',
+            filter: `hangout_id=eq.${hangoutId}`
+          },
+          (payload) => {
+            if (payload.new && payload.new.hangout_id === hangoutId) {
+              const formatted = hangoutService.formatMessage(payload.new);
+              addRealtimeMessage(hangoutId, formatted);
+            }
           }
-        }
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          // Re-fetch space messages upon connection to prevent gaps
-          loadSpaceMessages(hangoutId);
-        }
-      });
+        )
+        .subscribe((status, err) => {
+          if (status === 'SUBSCRIBED') {
+            console.log(`[Qleenq Realtime] Space channel subscribed: ${hangoutId}`);
+            loadSpaceMessages(hangoutId);
+          } else if (status === 'CHANNEL_ERROR') {
+            console.error(`[Qleenq Realtime] Space channel error for ${hangoutId}:`, err || status);
+          } else if (status === 'TIMED_OUT') {
+            console.warn(`[Qleenq Realtime] Space channel timed out for ${hangoutId}`);
+          } else if (status === 'CLOSED') {
+            console.log(`[Qleenq Realtime] Space channel closed for ${hangoutId}`);
+          }
+        });
+    };
+
+    initSubscription();
 
     return () => {
-      supabase.removeChannel(channel);
+      isCancelled = true;
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   };
 
@@ -305,13 +335,14 @@ export function LeenQProvider({ children }) {
 
   const isAttending = (hangoutId) => {
     const hangout = getHangoutById(hangoutId);
-    return hangout && currentUser?.id ? hangout.attendeeIds.includes(currentUser.id) : false;
+    return hangout && currentUser?.id ? (hangout.attendeeIds || []).includes(currentUser.id) : false;
   };
 
   return (
     <LeenQContext.Provider value={{
       hangouts,
       messagesMap,
+      isHangoutsLoading,
       joinHangout,
       leaveHangout,
       createHangout,

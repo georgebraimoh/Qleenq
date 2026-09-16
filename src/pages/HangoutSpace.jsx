@@ -13,14 +13,14 @@ import { useUser } from '../context/UserContext';
 export default function HangoutSpace() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getHangoutById, messagesMap, sendMessage, loadSpaceMessages, subscribeToSpaceMessages, isAttending, joinHangout, leaveHangout } = useLeenQ();
+  const { getHangoutById, messagesMap, sendMessage, loadSpaceMessages, subscribeToSpaceMessages, isAttending, isHangoutsLoading, joinHangout, leaveHangout } = useLeenQ();
   const { currentUser, isAuthLoading } = useUser();
 
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Loading guard while Supabase restores authentication session
-  if (isAuthLoading) {
+  // Loading guard while Supabase restores authentication session or fetches hangouts
+  if (isAuthLoading || (!getHangoutById(id) && isHangoutsLoading)) {
     return (
       <PageTransition>
         <div className="max-w-md mx-auto p-10 text-center space-y-4 my-10">

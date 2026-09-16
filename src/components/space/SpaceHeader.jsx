@@ -43,13 +43,13 @@ export default function SpaceHeader({ hangout }) {
             <p className="text-xs text-[#6F6F6F] flex items-center gap-2 mt-0.5">
               <span>{formattedDate} · {hangout.time}</span>
               <span>•</span>
-              <span className="font-semibold text-[#171717]">{hangout.attendeeIds.length} going</span>
+              <span className="font-semibold text-[#171717]">{(hangout?.attendeeIds || []).length} going</span>
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <AvatarStack attendeeIds={hangout.attendeeIds} maxVisible={3} size="md" />
+          <AvatarStack attendeeIds={hangout?.attendeeIds || []} maxVisible={3} size="md" />
           <Link
             to={`/hangout/${hangout.id}`}
             className="p-2 rounded-full text-[#6F6F6F] hover:bg-[#F7F6F2] hover:text-[#171717] transition-colors hidden sm:flex items-center gap-1 text-xs font-semibold"
