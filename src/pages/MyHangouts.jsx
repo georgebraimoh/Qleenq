@@ -9,24 +9,39 @@ import { useUser } from '../context/UserContext';
 
 export default function MyHangouts() {
   const { hangouts } = useLeenQ();
-  const { currentUser } = useUser();
+  const { currentUser, isAuthLoading } = useUser();
   const [activeTab, setActiveTab] = useState('upcoming');
 
-  // Filtered lists
-  const upcomingJoined = hangouts.filter(h =>
-    h.attendeeIds.includes(currentUser.id) &&
-    h.hostId !== currentUser.id &&
+  // Loading guard while Supabase restores authentication session
+  if (isAuthLoading) {
+    return (
+      <PageTransition>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center space-y-4">
+          <div className="w-8 h-8 border-4 border-[#FF6B4A] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-[#6F6F6F]">Loading your activities...</p>
+        </div>
+      </PageTransition>
+    );
+  }
+
+  const userId = currentUser?.id;
+
+  // Filtered lists safely guarded with userId
+  const upcomingJoined = userId ? hangouts.filter(h =>
+    h.attendeeIds &&
+    h.attendeeIds.includes(userId) &&
+    h.hostId !== userId &&
     h.status === 'upcoming'
-  );
+  ) : [];
 
-  const hostingHangouts = hangouts.filter(h =>
-    h.hostId === currentUser.id
-  );
+  const hostingHangouts = userId ? hangouts.filter(h =>
+    h.hostId === userId
+  ) : [];
 
-  const pastHangouts = hangouts.filter(h =>
-    (h.attendeeIds.includes(currentUser.id) || h.hostId === currentUser.id) &&
+  const pastHangouts = userId ? hangouts.filter(h =>
+    ((h.attendeeIds && h.attendeeIds.includes(userId)) || h.hostId === userId) &&
     h.status === 'completed'
-  );
+  ) : [];
 
   const getActiveList = () => {
     switch (activeTab) {

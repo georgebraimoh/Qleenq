@@ -14,10 +14,22 @@ export default function HangoutSpace() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getHangoutById, messagesMap, sendMessage, isAttending, joinHangout, leaveHangout } = useLeenQ();
-  const { currentUser } = useUser();
+  const { currentUser, isAuthLoading } = useUser();
 
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // Loading guard while Supabase restores authentication session
+  if (isAuthLoading) {
+    return (
+      <PageTransition>
+        <div className="max-w-md mx-auto p-10 text-center space-y-4 my-10">
+          <div className="w-8 h-8 border-4 border-[#FF6B4A] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-[#6F6F6F]">Checking space access...</p>
+        </div>
+      </PageTransition>
+    );
+  }
 
   const hangout = getHangoutById(id);
   const roomMessages = messagesMap[id] || [];
@@ -130,7 +142,7 @@ export default function HangoutSpace() {
               <span>Report</span>
             </button>
 
-            {hangout.hostId !== currentUser.id && (
+            {currentUser?.id && hangout.hostId !== currentUser.id && (
               <button
                 onClick={handleLeaveActivity}
                 className="hover:underline text-rose-600 flex items-center gap-1 font-bold cursor-pointer"
@@ -153,7 +165,7 @@ export default function HangoutSpace() {
               <ChatMessage
                 key={msg.id}
                 message={msg}
-                isOwnMessage={msg.userId === currentUser.id}
+                isOwnMessage={Boolean(currentUser?.id && msg.userId === currentUser.id)}
               />
             ))
           )}

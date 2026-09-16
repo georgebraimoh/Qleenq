@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { MOCK_HANGOUTS } from '../data/hangouts';
 import { INITIAL_MESSAGES } from '../data/messages';
 import { useUser } from './UserContext';
+import { hangoutService } from '../services/hangout/hangoutService';
 
 const LeenQContext = createContext();
 
@@ -28,6 +29,27 @@ export function LeenQProvider({ children }) {
   });
 
   useEffect(() => {
+    let isMounted = true;
+    const loadSupabaseHangouts = async () => {
+      try {
+        const fetched = await hangoutService.fetchHangouts();
+        if (isMounted && fetched && fetched.length > 0) {
+          setHangouts(prev => {
+            const fetchedIds = new Set(fetched.map(h => h.id));
+            const remainingLocal = prev.filter(h => !fetchedIds.has(h.id));
+            return [...fetched, ...remainingLocal];
+          });
+        }
+      } catch (err) {
+        console.error('Failed loading hangouts from Supabase:', err);
+      }
+    };
+
+    loadSupabaseHangouts();
+    return () => { isMounted = false; };
+  }, [currentUser?.id]);
+
+  useEffect(() => {
     localStorage.setItem(STORAGE_KEY_HANGOUTS, JSON.stringify(hangouts));
   }, [hangouts]);
 
@@ -35,11 +57,11 @@ export function LeenQProvider({ children }) {
     localStorage.setItem(STORAGE_KEY_MESSAGES, JSON.stringify(messagesMap));
   }, [messagesMap]);
 
-  const joinHangout = (id) => {
+  const joinHangout = async (id) => {
     const hangout = hangouts.find(h => h.id === id);
     if (!hangout) return { success: false, reason: "Hangout not found" };
 
-    if (hangout.attendeeIds.includes(currentUser.id)) {
+    if (currentUser?.id && hangout.attendeeIds.includes(currentUser.id)) {
       return { success: false, reason: "Already joined" };
     }
 
@@ -47,22 +69,28 @@ export function LeenQProvider({ children }) {
       return { success: false, reason: "Capacity full" };
     }
 
-    // Update hangout attendees
+    if (currentUser?.id) {
+      try {
+        await hangoutService.joinHangout(currentUser.id, id);
+      } catch (err) {
+        console.warn('Could not persist join to Supabase:', err.message);
+      }
+    }
+
     setHangouts(prev => prev.map(h => {
       if (h.id === id) {
         return {
           ...h,
-          attendeeIds: [...h.attendeeIds, currentUser.id]
+          attendeeIds: Array.from(new Set([...h.attendeeIds, currentUser?.id].filter(Boolean)))
         };
       }
       return h;
     }));
 
-    // Add system message to space chat
     const sysMsg = {
       id: `sys-${Date.now()}`,
       type: 'system',
-      text: `${currentUser.name} joined the activity.`
+      text: `${currentUser?.name || 'A user'} joined the activity.`
     };
 
     setMessagesMap(prev => ({
@@ -73,20 +101,28 @@ export function LeenQProvider({ children }) {
     return { success: true };
   };
 
-  const leaveHangout = (id) => {
+  const leaveHangout = async (id) => {
     const hangout = hangouts.find(h => h.id === id);
     if (!hangout) return;
 
-    if (hangout.hostId === currentUser.id) {
+    if (currentUser?.id && hangout.hostId === currentUser.id) {
       alert("As host, you cannot leave your own activity. You can cancel or delete it instead.");
       return;
+    }
+
+    if (currentUser?.id) {
+      try {
+        await hangoutService.leaveHangout(currentUser.id, id);
+      } catch (err) {
+        console.warn('Could not persist leave to Supabase:', err.message);
+      }
     }
 
     setHangouts(prev => prev.map(h => {
       if (h.id === id) {
         return {
           ...h,
-          attendeeIds: h.attendeeIds.filter(userId => userId !== currentUser.id)
+          attendeeIds: h.attendeeIds.filter(userId => userId !== currentUser?.id)
         };
       }
       return h;
@@ -95,7 +131,7 @@ export function LeenQProvider({ children }) {
     const sysMsg = {
       id: `sys-${Date.now()}`,
       type: 'system',
-      text: `${currentUser.name} left the activity.`
+      text: `${currentUser?.name || 'A user'} left the activity.`
     };
 
     setMessagesMap(prev => ({
@@ -104,50 +140,70 @@ export function LeenQProvider({ children }) {
     }));
   };
 
-  const createHangout = (newHangoutData) => {
-    const slug = newHangoutData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    const newId = `${slug}-${Date.now().toString().slice(-4)}`;
+  const createHangout = async (newHangoutData) => {
+    let newHangout;
+    if (currentUser?.id) {
+      try {
+        newHangout = await hangoutService.createHangout(currentUser.id, newHangoutData);
+      } catch (err) {
+        console.warn('Supabase create failed, falling back to local creation:', err.message);
+      }
+    }
 
-    const newHangout = {
-      id: newId,
-      title: newHangoutData.title,
-      category: newHangoutData.category,
-      location: newHangoutData.location,
-      city: "Abuja",
-      date: newHangoutData.date,
-      time: newHangoutData.time,
-      description: newHangoutData.description,
-      hostId: currentUser.id,
-      maxAttendees: parseInt(newHangoutData.maxAttendees, 10) || 10,
-      attendeeIds: [currentUser.id], // Creator automatically joins
-      image: newHangoutData.image || "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1200&q=80",
-      status: "upcoming",
-      featured: false,
-      isPopular: false
-    };
+    if (!newHangout) {
+      const slug = newHangoutData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const newId = `${slug}-${Date.now().toString().slice(-4)}`;
+
+      newHangout = {
+        id: newId,
+        title: newHangoutData.title,
+        category: newHangoutData.category,
+        location: newHangoutData.location,
+        city: "Abuja",
+        date: newHangoutData.date,
+        time: newHangoutData.time,
+        description: newHangoutData.description,
+        hostId: currentUser?.id || 'local-user',
+        maxAttendees: parseInt(newHangoutData.maxAttendees, 10) || 10,
+        attendeeIds: [currentUser?.id || 'local-user'],
+        image: newHangoutData.image || "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1200&q=80",
+        status: "upcoming",
+        featured: false,
+        isPopular: false
+      };
+    }
 
     setHangouts(prev => [newHangout, ...prev]);
 
-    // Initialize messages space
     const welcomeMsg = {
       id: `sys-${Date.now()}`,
       type: 'system',
-      text: `${currentUser.name} created the activity and opened the Qleenq Space!`
+      text: `${currentUser?.name || 'Host'} created the activity and opened the Qleenq Space!`
     };
 
     setMessagesMap(prev => ({
       ...prev,
-      [newId]: [welcomeMsg]
+      [newHangout.id]: [welcomeMsg]
     }));
 
     return newHangout;
   };
 
-  const cancelHangout = (id) => {
+  const cancelHangout = async (id) => {
+    try {
+      await hangoutService.cancelHangout(id);
+    } catch (err) {
+      console.warn('Could not persist cancellation:', err.message);
+    }
     setHangouts(prev => prev.map(h => h.id === id ? { ...h, status: 'cancelled' } : h));
   };
 
-  const deleteHangout = (id) => {
+  const deleteHangout = async (id) => {
+    try {
+      await hangoutService.deleteHangout(id);
+    } catch (err) {
+      console.warn('Could not persist deletion:', err.message);
+    }
     setHangouts(prev => prev.filter(h => h.id !== id));
   };
 
@@ -156,9 +212,9 @@ export function LeenQProvider({ children }) {
 
     const newMsg = {
       id: `msg-${Date.now()}`,
-      userId: currentUser.id,
-      userName: currentUser.name,
-      userAvatar: currentUser.avatar,
+      userId: currentUser?.id || 'guest',
+      userName: currentUser?.name || 'Guest User',
+      userAvatar: currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       text: text.trim(),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       type: 'user'
@@ -174,7 +230,7 @@ export function LeenQProvider({ children }) {
 
   const isAttending = (hangoutId) => {
     const hangout = getHangoutById(hangoutId);
-    return hangout ? hangout.attendeeIds.includes(currentUser.id) : false;
+    return hangout && currentUser?.id ? hangout.attendeeIds.includes(currentUser.id) : false;
   };
 
   return (

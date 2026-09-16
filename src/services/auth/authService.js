@@ -1,104 +1,315 @@
-import { googleAuth } from './googleAuth';
-import { facebookAuth } from './facebookAuth';
+import { supabase } from '../../lib/supabase';
 
-const USERS_DB_KEY = 'leenq_registered_users';
+const DEFAULT_AVATAR =
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80';
+
+function formatUser(authUser, profile = {}) {
+  return {
+    id: authUser.id,
+    name:
+      profile.name ||
+      authUser.user_metadata?.full_name ||
+      authUser.user_metadata?.name ||
+      authUser.email?.split('@')[0] ||
+      'Qleenq User',
+    email: authUser.email,
+    username:
+      profile.username ||
+      authUser.user_metadata?.username ||
+      authUser.email?.split('@')[0]?.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+    avatar:
+      profile.avatar ||
+      authUser.user_metadata?.avatar_url ||
+      authUser.user_metadata?.picture ||
+      authUser.user_metadata?.avatar ||
+      DEFAULT_AVATAR,
+    location: profile.location || 'Abuja',
+    bio: profile.bio || '',
+    interests: profile.interests || [],
+    hostedCount: profile.hosted_count || 0,
+    attendedCount: profile.attended_count || 0
+  };
+}
+
+async function getProfile(authUser) {
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', authUser.id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (profile) {
+    return formatUser(authUser, profile);
+  }
+
+  // Auto-create a profile row for new OAuth users if one does not exist
+  const name =
+    authUser.user_metadata?.full_name ||
+    authUser.user_metadata?.name ||
+    authUser.email?.split('@')[0] ||
+    'Qleenq User';
+
+  const username =
+    authUser.user_metadata?.username ||
+    authUser.email?.split('@')[0]?.toLowerCase().replace(/[^a-z0-9]/g, '_') ||
+    `user_${authUser.id.slice(0, 8)}`;
+
+  const avatar =
+    authUser.user_metadata?.avatar_url ||
+    authUser.user_metadata?.picture ||
+    authUser.user_metadata?.avatar ||
+    DEFAULT_AVATAR;
+
+  const newProfile = {
+    id: authUser.id,
+    name,
+    username,
+    avatar,
+    location: 'Abuja',
+    bio: 'Joined Qleenq to discover fun activities around the world!',
+    interests: [],
+    hosted_count: 0,
+    attended_count: 0
+  };
+
+  const { data: createdProfile, error: createError } = await supabase
+    .from('profiles')
+    .insert(newProfile)
+    .select()
+    .single();
+
+  if (createError) {
+    console.warn('Could not auto-create profile row:', createError.message);
+    return formatUser(authUser, newProfile);
+  }
+
+  return formatUser(authUser, createdProfile);
+}
 
 export const authService = {
-  getStoredUsers() {
-    try {
-      const stored = localStorage.getItem(USERS_DB_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch (e) {
-      return [];
-    }
-  },
+  async loginWithGoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
 
-  saveUserToDB(user) {
-    const users = this.getStoredUsers();
-    const existingIndex = users.findIndex(u => u.email === user.email);
-    if (existingIndex >= 0) {
-      users[existingIndex] = { ...users[existingIndex], ...user };
-    } else {
-      users.push(user);
+    if (error) {
+      throw new Error(error.message);
     }
-    localStorage.setItem(USERS_DB_KEY, JSON.stringify(users));
+
+    return data;
   },
 
   async loginWithEmail(email, password) {
-    await new Promise(resolve => setTimeout(resolve, 600));
-
     if (!email || !password) {
-      throw new Error("Email and password are required.");
+      throw new Error('Email and password are required.');
     }
 
-    const users = this.getStoredUsers();
-    const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password
+    });
 
-    if (!foundUser) {
-      // Mock automatic account creation for smooth demo if user doesn't exist yet
-      const newUser = {
-        id: `user-${Date.now()}`,
-        name: email.split('@')[0].replace('.', ' '),
-        email,
-        username: email.split('@')[0],
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-        location: "Wuse 2, Abuja",
-        bio: "Discovering activities around Abuja.",
-        interests: ["Food", "Music", "Tech"],
-        hostedCount: 0,
-        attendedCount: 0
-      };
-      this.saveUserToDB(newUser);
-      return newUser;
+    if (error) {
+      throw new Error(error.message);
     }
 
-    if (foundUser.password && foundUser.password !== password) {
-      throw new Error("Incorrect password. Please try again.");
+    if (!data.user) {
+      throw new Error('Unable to sign in. Please try again.');
     }
 
-    return foundUser;
+    return await getProfile(data.user);
   },
 
   async registerWithEmail({ name, email, password, avatar }) {
-    await new Promise(resolve => setTimeout(resolve, 700));
-
     if (!name || !email || !password) {
-      throw new Error("Please complete all required fields.");
+      throw new Error('Please complete all required fields.');
     }
 
-    const users = this.getStoredUsers();
-    if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-      throw new Error("An account with this email already exists.");
-    }
+    const username = email
+      .split('@')[0]
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '_');
 
-    const newUser = {
-      id: `user-${Date.now()}`,
-      name,
-      email,
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
       password,
-      username: email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '_'),
-      avatar: avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-      location: "Abuja",
-      bio: "Joined Qleenq to discover fun activities around the world!",
+      options: {
+        data: {
+          name: name.trim(),
+          username,
+          avatar: avatar || DEFAULT_AVATAR
+        }
+      }
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data.user) {
+      throw new Error('Account could not be created. Please try again.');
+    }
+
+    const newProfile = {
+      id: data.user.id,
+      name: name.trim(),
+      username,
+      avatar: avatar || DEFAULT_AVATAR,
+      location: 'Abuja',
+      bio: 'Joined Qleenq to discover fun activities around the world!',
       interests: [],
-      hostedCount: 0,
-      attendedCount: 0,
-      isNewUser: true
+      hosted_count: 0,
+      attended_count: 0
     };
 
-    this.saveUserToDB(newUser);
-    return newUser;
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .insert(newProfile)
+      .select()
+      .single();
+
+    if (profileError) {
+      throw new Error(profileError.message);
+    }
+
+    return formatUser(data.user, profile);
   },
 
-  async loginWithGoogle() {
-    const user = await googleAuth.signIn();
-    this.saveUserToDB(user);
-    return user;
+  async getCurrentUser() {
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.getUser();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!user) {
+      return null;
+    }
+
+    return await getProfile(user);
   },
 
-  async loginWithFacebook() {
-    const user = await facebookAuth.signIn();
-    this.saveUserToDB(user);
-    return user;
+  async logout() {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  },
+
+  async resetPasswordForEmail(email) {
+    if (!email || !email.trim()) {
+      throw new Error('Please enter your email address.');
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: 'http://localhost:5174/reset-password'
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  },
+
+  async updatePassword(newPassword) {
+    if (!newPassword) {
+      throw new Error('Please enter a new password.');
+    }
+
+    if (newPassword.length < 6) {
+      throw new Error('Password must be at least 6 characters.');
+    }
+
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data;
+  },
+
+  async uploadAvatarImage(userId, file) {
+    if (!file) return null;
+
+    const MAX_SIZE = 5 * 1024 * 1024; // 5 MB limit
+    if (file.size > MAX_SIZE) {
+      throw new Error('Avatar image size exceeds the 5 MB limit.');
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type.toLowerCase())) {
+      throw new Error('Unsupported image format. Please select a JPG, PNG, or WEBP image.');
+    }
+
+    const fileExt = file.name.split('.').pop() || 'jpg';
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+    const filePath = `${userId || 'guest'}/${fileName}`;
+
+    const { data, error } = await supabase.storage
+      .from('profile-images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      throw new Error(`Profile picture upload failed: ${error.message}`);
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('profile-images')
+      .getPublicUrl(data.path);
+
+    return publicUrlData.publicUrl;
+  },
+
+  async updateProfile(userId, profileUpdates) {
+    if (!userId) {
+      throw new Error('User ID is required to update profile.');
+    }
+
+    const allowedFields = ['name', 'username', 'avatar', 'location', 'bio', 'interests'];
+    const updatesPayload = {};
+
+    allowedFields.forEach((field) => {
+      if (profileUpdates[field] !== undefined) {
+        updatesPayload[field] = profileUpdates[field];
+      }
+    });
+
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .update(updatesPayload)
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    const {
+      data: { user: authUser },
+      error: userError
+    } = await supabase.auth.getUser();
+
+    if (userError || !authUser) {
+      return formatUser({ id: userId }, profile || {});
+    }
+
+    return formatUser(authUser, profile || {});
   }
 };

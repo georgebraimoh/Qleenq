@@ -12,10 +12,24 @@ export default function ShareModal({ isOpen, onClose, hangout }) {
 
   const locName = typeof hangout.location === 'object'
     ? `${hangout.location.placeName}, ${hangout.location.city}`
-    : hangout.location;
+    : (hangout.location || 'Abuja');
+
+  const formattedDate = hangout.date
+    ? new Date(hangout.date).toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+      })
+    : hangout.date;
 
   const shareUrl = `${window.location.origin}/hangout/${hangout.id}`;
-  const shareText = `Check out "${hangout.title}" happening at ${locName} on Qleenq!`;
+
+  const whatsappMessage = `🎉 Join me at "${hangout.title}" on Qleenq!\n\n📍 ${locName}\n📅 ${formattedDate || ''}${hangout.time ? ` at ${hangout.time}` : ''}\n\nCome through and let's have a good time!\n\n👉 ${shareUrl}`;
+
+  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappMessage)}`;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out "${hangout.title}" on Qleenq!`)}&url=${encodeURIComponent(shareUrl)}`;
+
+  const canNativeShare = typeof navigator !== 'undefined' && Boolean(navigator.share);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -24,8 +38,20 @@ export default function ShareModal({ isOpen, onClose, hangout }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`;
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+  const handleNativeShare = async () => {
+    if (!canNativeShare) return;
+    try {
+      await navigator.share({
+        title: hangout.title,
+        text: `🎉 Join me at "${hangout.title}" on Qleenq!`,
+        url: shareUrl
+      });
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error('Error opening share sheet:', err);
+      }
+    }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Share Activity">
@@ -49,6 +75,21 @@ export default function ShareModal({ isOpen, onClose, hangout }) {
             </p>
           </div>
         </div>
+
+        {/* Browser Native Web Share API Button */}
+        {canNativeShare && (
+          <Button
+            type="button"
+            onClick={handleNativeShare}
+            variant="primary"
+            size="md"
+            fullWidth
+            className="gap-2 shadow-xs"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>Share via device (Apps)</span>
+          </Button>
+        )}
 
         {/* Share Link Copy Box */}
         <div className="space-y-1.5">

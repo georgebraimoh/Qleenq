@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Calendar, Clock, MapPin, Users, Image, CheckCircle, ArrowRight, MessageSquare } from 'lucide-react';
+import { Sparkles, Calendar, Clock, MapPin, Users, Image as ImageIcon, CheckCircle, ArrowRight, MessageSquare, Upload, X, Share2 } from 'lucide-react';
 import PageTransition from '../components/layout/PageTransition';
 import Button from '../components/common/Button';
 import FormField from '../components/common/FormField';
 import LocationAutocomplete from '../components/common/LocationAutocomplete';
 import SafetyReminder from '../components/safety/SafetyReminder';
+import ShareModal from '../components/common/ShareModal';
 import { CATEGORIES } from '../data/categories';
 import { useLeenQ } from '../context/LeenQContext';
+import { useUser } from '../context/UserContext';
+import { hangoutService } from '../services/hangout/hangoutService';
 
 const PRESET_IMAGES = [
   { label: "Photowalk / Outdoor", url: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80" },
@@ -23,6 +26,7 @@ const PRESET_IMAGES = [
 export default function CreateHangout() {
   const navigate = useNavigate();
   const { createHangout } = useLeenQ();
+  const { currentUser } = useUser();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -35,8 +39,16 @@ export default function CreateHangout() {
     image: PRESET_IMAGES[0].url
   });
 
+  const [customImageFile, setCustomImageFile] = useState(null);
+  const [customImagePreview, setCustomImagePreview] = useState(null);
+  const [imageError, setImageError] = useState('');
+  const [uploadingState, setUploadingState] = useState('');
+
   const [errors, setErrors] = useState({});
   const [createdActivity, setCreatedActivity] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createError, setCreateError] = useState('');
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const validate = () => {
     const errs = {};
@@ -52,17 +64,85 @@ export default function CreateHangout() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageError('');
+
+    const MAX_SIZE = 5 * 1024 * 1024; // 5 MB limit
+    if (file.size > MAX_SIZE) {
+      setImageError('Selected image exceeds the 5 MB size limit.');
+      e.target.value = '';
+      return;
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type.toLowerCase())) {
+      setImageError('Unsupported image format. Please select a JPG, PNG, or WEBP image.');
+      e.target.value = '';
+      return;
+    }
+
+    setCustomImageFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setCustomImagePreview(previewUrl);
+  };
+
+  const handleClearCustomImage = () => {
+    setCustomImageFile(null);
+    if (customImagePreview) {
+      URL.revokeObjectURL(customImagePreview);
+    }
+    setCustomImagePreview(null);
+    setImageError('');
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const newActivity = createHangout(formData);
-    setCreatedActivity(newActivity);
+    setIsSubmitting(true);
+    setCreateError('');
+    setUploadingState('');
+
+    let finalImageUrl = formData.image;
+
+    try {
+      if (customImageFile) {
+        setUploadingState('Uploading image...');
+        const publicUrl = await hangoutService.uploadHangoutImage(currentUser?.id, customImageFile);
+        if (publicUrl) {
+          finalImageUrl = publicUrl;
+        }
+      }
+
+      setUploadingState('Publishing activity...');
+      const newActivity = await createHangout({
+        ...formData,
+        image: finalImageUrl
+      });
+      setCreatedActivity(newActivity);
+    } catch (err) {
+      setCreateError(err.message || 'Failed to create activity.');
+    } finally {
+      setIsSubmitting(false);
+      setUploadingState('');
+    }
   };
 
   return (
     <PageTransition>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+        {/* SHARE MODAL FOR CREATED ACTIVITY */}
+        {createdActivity && (
+          <ShareModal
+            isOpen={isShareModalOpen}
+            onClose={() => setIsShareModalOpen(false)}
+            hangout={createdActivity}
+          />
+        )}
+
         {/* SUCCESS OVERLAY */}
         <AnimatePresence>
           {createdActivity ? (
@@ -95,15 +175,26 @@ export default function CreateHangout() {
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="lg"
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="w-full sm:w-auto gap-2"
+                >
+                  <Share2 className="w-5 h-5" />
+                  <span>Share Hangout</span>
+                </Button>
+
                 <Link to={`/hangout/${createdActivity.id}/space`}>
-                  <Button variant="primary" size="lg" className="w-full sm:w-auto gap-2">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto gap-2">
                     <MessageSquare className="w-5 h-5" />
                     <span>Go to space</span>
                   </Button>
                 </Link>
 
                 <Link to={`/hangout/${createdActivity.id}`}>
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                  <Button variant="ghost" size="lg" className="w-full sm:w-auto">
                     View activity details
                   </Button>
                 </Link>
@@ -202,42 +293,100 @@ export default function CreateHangout() {
                   />
                 </FormField>
 
-                {/* Cover Image Picker */}
-                <FormField label="Cover Image Preset" helpText="Select a high quality photography cover for your activity card.">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-                    {PRESET_IMAGES.map((img, idx) => {
-                      const isSelected = formData.image === img.url;
-                      return (
-                        <motion.button
+                {/* Cover Image Picker & File Upload */}
+                <FormField label="Cover Image" helpText="Upload a photo from your device or select a preset cover for your activity.">
+                  <div className="space-y-4 pt-1">
+                    {/* Device Upload Control */}
+                    <div className="flex flex-wrap items-center gap-3">
+                      <label className="px-4 py-2.5 bg-white border border-[#E8E6E1] hover:border-[#FF6B4A] hover:text-[#FF6B4A] rounded-2xl text-xs font-semibold text-[#171717] flex items-center gap-2 transition-all shadow-xs cursor-pointer">
+                        <Upload className="w-4 h-4 text-[#FF6B4A]" />
+                        <span>Upload photo from device</span>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                      </label>
+
+                      {customImageFile && (
+                        <button
                           type="button"
-                          key={idx}
-                          whileHover={{ scale: 1.04 }}
-                          whileTap={{ scale: 0.96 }}
-                          onClick={() => setFormData({ ...formData, image: img.url })}
-                          className={`relative h-20 rounded-xl overflow-hidden border-2 transition-colors cursor-pointer ${
-                            isSelected ? 'border-[#FF6B4A] shadow-md' : 'border-transparent opacity-75 hover:opacity-100'
-                          }`}
+                          onClick={handleClearCustomImage}
+                          className="text-xs font-semibold text-rose-500 hover:underline flex items-center gap-1 cursor-pointer"
                         >
-                          <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
-                          {isSelected && (
-                            <div className="absolute top-1 right-1 bg-[#FF6B4A] text-white p-0.5 rounded-full shadow-xs">
-                              <CheckCircle className="w-3.5 h-3.5" />
-                            </div>
-                          )}
-                          <span className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold p-1 truncate text-center">
-                            {img.label}
-                          </span>
-                        </motion.button>
-                      );
-                    })}
+                          <X className="w-3.5 h-3.5" />
+                          <span>Remove custom photo</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Image Validation Error Alert */}
+                    {imageError && (
+                      <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-600">
+                        {imageError}
+                      </div>
+                    )}
+
+                    {/* Custom Image Preview */}
+                    {customImagePreview ? (
+                      <div className="relative h-40 rounded-2xl overflow-hidden border-2 border-[#FF6B4A] max-w-md shadow-md">
+                        <img src={customImagePreview} alt="Custom cover preview" className="w-full h-full object-cover" />
+                        <div className="absolute top-2 right-2 bg-[#FF6B4A] text-white p-1 rounded-full shadow-xs">
+                          <CheckCircle className="w-4 h-4" />
+                        </div>
+                        <span className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold p-2 text-center truncate">
+                          Custom Cover: {customImageFile.name}
+                        </span>
+                      </div>
+                    ) : (
+                      /* Preset Images Grid */
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {PRESET_IMAGES.map((img, idx) => {
+                          const isSelected = formData.image === img.url;
+                          return (
+                            <motion.button
+                              type="button"
+                              key={idx}
+                              whileHover={{ scale: 1.04 }}
+                              whileTap={{ scale: 0.96 }}
+                              onClick={() => {
+                                handleClearCustomImage();
+                                setFormData({ ...formData, image: img.url });
+                              }}
+                              className={`relative h-20 rounded-xl overflow-hidden border-2 transition-colors cursor-pointer ${
+                                isSelected ? 'border-[#FF6B4A] shadow-md' : 'border-transparent opacity-75 hover:opacity-100'
+                              }`}
+                            >
+                              <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
+                              {isSelected && (
+                                <div className="absolute top-1 right-1 bg-[#FF6B4A] text-white p-0.5 rounded-full shadow-xs">
+                                  <CheckCircle className="w-3.5 h-3.5" />
+                                </div>
+                              )}
+                              <span className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold p-1 truncate text-center">
+                                {img.label}
+                              </span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </FormField>
+
+                {/* Create Error Banner */}
+                {createError && (
+                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-600">
+                    {createError}
+                  </div>
+                )}
 
                 {/* Submit Action */}
                 <div className="pt-4 border-t border-[#E8E6E1]">
                   <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.97 }}>
-                    <Button type="submit" variant="primary" size="lg" fullWidth showArrow>
-                      Create activity
+                    <Button type="submit" variant="primary" size="lg" fullWidth showArrow disabled={isSubmitting}>
+                      {isSubmitting ? (uploadingState || 'Publishing activity...') : 'Create activity'}
                     </Button>
                   </motion.div>
                 </div>

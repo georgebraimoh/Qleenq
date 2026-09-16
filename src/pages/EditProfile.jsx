@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import PageTransition from '../components/layout/PageTransition';
 import Button from '../components/common/Button';
 import FormField from '../components/common/FormField';
-import { ArrowLeft, CheckCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle, AlertCircle, Upload, X } from 'lucide-react';
 import { useUser } from '../context/UserContext';
+import { authService } from '../services/auth/authService';
 import { LOCATIONS } from '../data/locations';
 
 const AVATAR_PRESETS = [
@@ -25,15 +26,56 @@ export default function EditProfile() {
   const { currentUser, updateProfile } = useUser();
 
   const [formData, setFormData] = useState({
-    name: currentUser.name || '',
-    title: currentUser.title || '',
-    location: currentUser.location || 'Wuse 2, Abuja',
-    bio: currentUser.bio || '',
-    avatar: currentUser.avatar || AVATAR_PRESETS[0],
-    interests: currentUser.interests || []
+    name: currentUser?.name || '',
+    title: currentUser?.title || '',
+    location: currentUser?.location || 'Wuse 2, Abuja',
+    bio: currentUser?.bio || '',
+    avatar: currentUser?.avatar || AVATAR_PRESETS[0],
+    interests: currentUser?.interests || []
   });
 
+  const [customAvatarFile, setCustomAvatarFile] = useState(null);
+  const [customAvatarPreview, setCustomAvatarPreview] = useState(null);
+  const [avatarError, setAvatarError] = useState('');
+
   const [saved, setSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [savingState, setSavingState] = useState('');
+  const [saveError, setSaveError] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setAvatarError('');
+
+    const MAX_SIZE = 5 * 1024 * 1024; // 5 MB limit
+    if (file.size > MAX_SIZE) {
+      setAvatarError('Selected image exceeds the 5 MB size limit.');
+      e.target.value = '';
+      return;
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type.toLowerCase())) {
+      setAvatarError('Unsupported image format. Please select a JPG, PNG, or WEBP image.');
+      e.target.value = '';
+      return;
+    }
+
+    setCustomAvatarFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setCustomAvatarPreview(previewUrl);
+  };
+
+  const handleClearCustomAvatar = () => {
+    setCustomAvatarFile(null);
+    if (customAvatarPreview) {
+      URL.revokeObjectURL(customAvatarPreview);
+    }
+    setCustomAvatarPreview(null);
+    setAvatarError('');
+  };
 
   const toggleInterest = (interest) => {
     setFormData(prev => {
@@ -47,13 +89,40 @@ export default function EditProfile() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    updateProfile(formData);
-    setSaved(true);
-    setTimeout(() => {
-      navigate(`/profile/${currentUser.username}`);
-    }, 600);
+    setSaved(false);
+    setSaveError('');
+    setIsSaving(true);
+    setSavingState('');
+
+    let finalAvatarUrl = formData.avatar;
+
+    try {
+      if (customAvatarFile) {
+        setSavingState('Uploading profile picture...');
+        const publicUrl = await authService.uploadAvatarImage(currentUser?.id, customAvatarFile);
+        if (publicUrl) {
+          finalAvatarUrl = publicUrl;
+        }
+      }
+
+      setSavingState('Saving profile changes...');
+      const updated = await updateProfile({
+        ...formData,
+        avatar: finalAvatarUrl
+      });
+
+      setSaved(true);
+      setTimeout(() => {
+        navigate(`/profile/${updated?.username || currentUser?.username}`);
+      }, 600);
+    } catch (err) {
+      setSaveError(err.message || 'Failed to update profile. Please try again.');
+    } finally {
+      setIsSaving(false);
+      setSavingState('');
+    }
   };
 
   return (
@@ -68,28 +137,88 @@ export default function EditProfile() {
         </button>
 
         <div className="space-y-2">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#FF6B4A]">Account Settings</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#E2522B]">Account Settings</span>
           <h1 className="text-3xl font-extrabold font-heading text-[#171717]">
             Edit Profile
           </h1>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white border border-[#E8E6E1] rounded-3xl p-6 md:p-8 shadow-xs space-y-6">
-          {/* Avatar Selector */}
-          <FormField label="Choose Avatar">
-            <div className="flex items-center gap-3 pt-2">
-              {AVATAR_PRESETS.map((url, idx) => (
-                <button
-                  type="button"
-                  key={idx}
-                  onClick={() => setFormData({ ...formData, avatar: url })}
-                  className={`relative w-14 h-14 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
-                    formData.avatar === url ? 'border-[#FF6B4A] ring-2 ring-[#FF6B4A]/30 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
-                  }`}
-                >
-                  <img src={url} alt="Avatar option" className="w-full h-full object-cover" />
-                </button>
-              ))}
+          {saveError && (
+            <div className="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-xs font-medium text-rose-600 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{saveError}</span>
+            </div>
+          )}
+
+          {/* Avatar Selector & Custom Upload */}
+          <FormField label="Profile Picture" helpText="Select a preset avatar or upload a custom photo from your device (JPG, PNG, WEBP max 5 MB).">
+            <div className="space-y-4 pt-1">
+              {/* Active Avatar Preview & Device Upload Button */}
+              <div className="flex items-center gap-4">
+                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#E2522B] shadow-sm shrink-0">
+                  <img
+                    src={customAvatarPreview || formData.avatar}
+                    alt="Current avatar preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="px-3.5 py-2 bg-[#F7F6F2] border border-[#E8E6E1] hover:border-[#E2522B] hover:text-[#E2522B] rounded-xl text-xs font-semibold text-[#171717] inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs">
+                    <Upload className="w-3.5 h-3.5 text-[#E2522B]" />
+                    <span>Upload photo from device</span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {customAvatarFile && (
+                    <button
+                      type="button"
+                      onClick={handleClearCustomAvatar}
+                      className="block text-[11px] font-semibold text-rose-500 hover:underline cursor-pointer"
+                    >
+                      Remove custom photo
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Avatar Error Alert */}
+              {avatarError && (
+                <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-600">
+                  {avatarError}
+                </div>
+              )}
+
+              {/* Presets Row */}
+              <div className="space-y-1.5">
+                <p className="text-xs font-semibold text-[#6F6F6F]">Or select a preset avatar:</p>
+                <div className="flex items-center gap-3">
+                  {AVATAR_PRESETS.map((url, idx) => {
+                    const isSelected = !customAvatarFile && formData.avatar === url;
+                    return (
+                      <button
+                        type="button"
+                        key={idx}
+                        onClick={() => {
+                          handleClearCustomAvatar();
+                          setFormData({ ...formData, avatar: url });
+                        }}
+                        className={`relative w-12 h-12 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
+                          isSelected ? 'border-[#E2522B] ring-2 ring-[#E2522B]/30 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
+                        }`}
+                      >
+                        <img src={url} alt="Avatar option" className="w-full h-full object-cover" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </FormField>
 
@@ -100,7 +229,7 @@ export default function EditProfile() {
                 type="text"
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+                className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B]"
               />
             </FormField>
 
@@ -110,7 +239,7 @@ export default function EditProfile() {
                 value={formData.title}
                 onChange={e => setFormData({ ...formData, title: e.target.value })}
                 placeholder="e.g. Web Developer, Architect..."
-                className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+                className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B]"
               />
             </FormField>
           </div>
@@ -122,7 +251,7 @@ export default function EditProfile() {
               value={formData.location}
               onChange={e => setFormData({ ...formData, location: e.target.value })}
               placeholder="e.g. Wuse 2, Abuja"
-              className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+              className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B]"
             />
           </FormField>
 
@@ -132,7 +261,7 @@ export default function EditProfile() {
               rows="3"
               value={formData.bio}
               onChange={e => setFormData({ ...formData, bio: e.target.value })}
-              className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A]"
+              className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B]"
             />
           </FormField>
 
@@ -148,7 +277,7 @@ export default function EditProfile() {
                     onClick={() => toggleInterest(interest)}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-[#FF6B4A] text-white shadow-xs'
+                        ? 'bg-[#E2522B] text-white shadow-xs'
                         : 'bg-[#F7F6F2] text-[#6F6F6F] border border-[#E8E6E1] hover:text-[#171717]'
                     }`}
                   >
@@ -167,8 +296,8 @@ export default function EditProfile() {
               </span>
             ) : <span />}
 
-            <Button type="submit" variant="primary" size="md">
-              Save changes
+            <Button type="submit" variant="primary" size="md" disabled={isSaving}>
+              {isSaving ? (savingState || 'Saving...') : 'Save changes'}
             </Button>
           </div>
         </form>

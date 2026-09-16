@@ -23,6 +23,7 @@ import EditProfile from './pages/EditProfile';
 import Login from './pages/Login';
 import Onboarding from './pages/Onboarding';
 import Safety from './pages/Safety';
+import ResetPassword from './pages/ResetPassword';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -39,6 +40,7 @@ function AnimatedRoutes() {
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/safety" element={<Safety />} />
         <Route path="*" element={<Explore />} />

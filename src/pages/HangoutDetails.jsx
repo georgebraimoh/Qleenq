@@ -44,8 +44,8 @@ export default function HangoutDetails() {
   }
 
   const attending = isAttending(hangout.id);
-  const isHost = hangout.hostId === currentUser.id;
-  const isFull = hangout.attendeeIds.length >= hangout.maxAttendees;
+  const isHost = Boolean(currentUser?.id && hangout.hostId === currentUser.id);
+  const isFull = hangout.attendeeIds ? hangout.attendeeIds.length >= hangout.maxAttendees : false;
 
   const formattedDate = new Date(hangout.date).toLocaleDateString('en-US', {
     weekday: 'long',
@@ -63,22 +63,29 @@ export default function HangoutDetails() {
 
   const distanceKm = getDistanceFromActive(locObj.latitude, locObj.longitude);
 
-  const handleJoinClick = () => {
+  const handleJoinClick = async () => {
     if (!isAuthenticated) {
       openAuthModal('welcome');
       return;
     }
 
     setIsJoining(true);
-    setTimeout(() => {
-      joinHangout(hangout.id);
+    try {
+      await joinHangout(hangout.id);
+    } catch (err) {
+      console.error('Error joining activity:', err);
+    } finally {
       setIsJoining(false);
-    }, 400);
+    }
   };
 
-  const handleLeaveClick = () => {
+  const handleLeaveClick = async () => {
     if (window.confirm("Are you sure you want to leave this activity?")) {
-      leaveHangout(hangout.id);
+      try {
+        await leaveHangout(hangout.id);
+      } catch (err) {
+        console.error('Error leaving activity:', err);
+      }
     }
   };
 

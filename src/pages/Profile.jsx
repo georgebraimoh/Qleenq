@@ -10,19 +10,44 @@ import { useLeenQ } from '../context/LeenQContext';
 
 export default function Profile() {
   const { username } = useParams();
-  const { users, currentUser, logout, isAuthenticated } = useUser();
+  const { users, currentUser, logout, isAuthenticated, isAuthLoading } = useUser();
   const { hangouts } = useLeenQ();
   const navigate = useNavigate();
 
   const [reportModalOpen, setReportModalOpen] = useState(false);
 
+  // Loading guard while Supabase restores authentication session
+  if (isAuthLoading) {
+    return (
+      <PageTransition>
+        <div className="max-w-5xl mx-auto px-4 py-20 text-center space-y-4">
+          <div className="w-8 h-8 border-4 border-[#FF6B4A] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-[#6F6F6F]">Loading profile...</p>
+        </div>
+      </PageTransition>
+    );
+  }
+
   // Find user by username or fallback to current user
-  const profileUser = users.find(u => u.username === username) || currentUser;
-  const isOwnProfile = profileUser.id === currentUser.id && isAuthenticated;
+  const profileUser = (username ? users.find(u => u.username === username) : null) || currentUser;
+
+  if (!profileUser) {
+    return (
+      <PageTransition>
+        <div className="max-w-5xl mx-auto px-4 py-20 text-center space-y-4">
+          <h2 className="text-xl font-bold font-heading text-[#171717]">Profile not found</h2>
+          <p className="text-xs text-[#6F6F6F]">We couldn't find the requested member profile.</p>
+          <Button onClick={() => navigate('/explore')}>Back to Explore</Button>
+        </div>
+      </PageTransition>
+    );
+  }
+
+  const isOwnProfile = Boolean(currentUser?.id && profileUser.id === currentUser.id && isAuthenticated);
 
   // Calculate activities
   const hosted = hangouts.filter(h => h.hostId === profileUser.id);
-  const attended = hangouts.filter(h => h.attendeeIds.includes(profileUser.id));
+  const attended = hangouts.filter(h => h.attendeeIds && h.attendeeIds.includes(profileUser.id));
 
   return (
     <PageTransition>

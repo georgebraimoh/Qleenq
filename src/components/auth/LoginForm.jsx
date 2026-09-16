@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import FormField from '../common/FormField';
 import Button from '../common/Button';
-import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { authService } from '../../services/auth/authService';
 
 export default function LoginForm({ onSubmit, onToggleSignUp, isLoading, error }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [resetSuccess, setResetSuccess] = useState('');
+  const [isResetLoading, setIsResetLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setValidationError('');
+    setResetSuccess('');
 
     if (!email.trim() || !password) {
       setValidationError('Please enter both your email and password.');
@@ -19,6 +23,32 @@ export default function LoginForm({ onSubmit, onToggleSignUp, isLoading, error }
     }
 
     onSubmit({ email: email.trim(), password });
+  };
+
+  const handleForgotPassword = async () => {
+    setValidationError('');
+    setResetSuccess('');
+
+    if (!email.trim()) {
+      setValidationError('Please enter your email address to reset your password.');
+      return;
+    }
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email.trim())) {
+      setValidationError('Please enter a valid email address.');
+      return;
+    }
+
+    setIsResetLoading(true);
+    try {
+      await authService.resetPasswordForEmail(email.trim());
+      setResetSuccess('Password reset link sent! Check your inbox.');
+    } catch (err) {
+      setValidationError(err.message || 'Failed to send password reset email.');
+    } finally {
+      setIsResetLoading(false);
+    }
   };
 
   return (
@@ -30,6 +60,13 @@ export default function LoginForm({ onSubmit, onToggleSignUp, isLoading, error }
         </div>
       )}
 
+      {resetSuccess && (
+        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs font-medium text-emerald-700 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+          <span>{resetSuccess}</span>
+        </div>
+      )}
+
       <FormField label="Email address" required>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6F6F6F]">
@@ -38,10 +75,13 @@ export default function LoginForm({ onSubmit, onToggleSignUp, isLoading, error }
           <input
             type="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={e => {
+              setEmail(e.target.value);
+              if (validationError) setValidationError('');
+            }}
             placeholder="name@example.com"
-            disabled={isLoading}
-            className="w-full pl-10 pr-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A] disabled:opacity-50"
+            disabled={isLoading || isResetLoading}
+            className="w-full pl-10 pr-4 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B] disabled:opacity-50"
           />
         </div>
       </FormField>
@@ -56,8 +96,8 @@ export default function LoginForm({ onSubmit, onToggleSignUp, isLoading, error }
             value={password}
             onChange={e => setPassword(e.target.value)}
             placeholder="Enter your password"
-            disabled={isLoading}
-            className="w-full pl-10 pr-10 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#FF6B4A] disabled:opacity-50"
+            disabled={isLoading || isResetLoading}
+            className="w-full pl-10 pr-10 py-3 bg-[#F7F6F2] border border-[#E8E6E1] rounded-2xl text-sm focus:outline-none focus:bg-white focus:border-[#E2522B] disabled:opacity-50"
           />
           <button
             type="button"
@@ -72,10 +112,11 @@ export default function LoginForm({ onSubmit, onToggleSignUp, isLoading, error }
       <div className="flex items-center justify-between text-xs pt-1">
         <button
           type="button"
-          onClick={() => alert("Forgot password link sent! Check your inbox.")}
-          className="text-[#6F6F6F] hover:text-[#FF6B4A] font-medium cursor-pointer"
+          onClick={handleForgotPassword}
+          disabled={isLoading || isResetLoading}
+          className="text-[#6F6F6F] hover:text-[#E2522B] font-medium cursor-pointer disabled:opacity-50 transition-colors"
         >
-          Forgot password?
+          {isResetLoading ? 'Sending reset link...' : 'Forgot password?'}
         </button>
       </div>
 
@@ -84,7 +125,7 @@ export default function LoginForm({ onSubmit, onToggleSignUp, isLoading, error }
         variant="primary"
         size="lg"
         fullWidth
-        disabled={isLoading || !email.trim() || !password}
+        disabled={isLoading || isResetLoading || !email.trim() || !password}
         className="mt-2"
       >
         {isLoading ? 'Signing in...' : 'Sign in'}
@@ -96,7 +137,7 @@ export default function LoginForm({ onSubmit, onToggleSignUp, isLoading, error }
           <button
             type="button"
             onClick={onToggleSignUp}
-            className="text-[#FF6B4A] font-bold hover:underline cursor-pointer"
+            className="text-[#E2522B] font-bold hover:underline cursor-pointer"
           >
             Create account
           </button>
