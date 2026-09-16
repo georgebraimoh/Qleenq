@@ -6,15 +6,15 @@ import AvatarStack from '../common/AvatarStack';
 export default function SpaceHeader({ hangout }) {
   const navigate = useNavigate();
 
-  const formattedDate = new Date(hangout.date).toLocaleDateString('en-US', {
+  const formattedDate = hangout?.date ? new Date(hangout.date).toLocaleDateString('en-US', {
     weekday: 'short',
     month: 'short',
     day: 'numeric'
-  });
+  }) : '';
 
-  const locObj = typeof hangout.location === 'object' ? hangout.location : {
-    placeName: hangout.location,
-    city: hangout.city || 'Local Area'
+  const locObj = typeof hangout?.location === 'object' ? hangout.location : {
+    placeName: hangout?.location || 'Meeting Location',
+    city: hangout?.city || 'Local Area'
   };
 
   return (

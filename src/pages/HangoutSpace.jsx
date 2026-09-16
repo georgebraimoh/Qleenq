@@ -20,9 +20,9 @@ export default function HangoutSpace() {
   const messagesEndRef = useRef(null);
 
   // Loading guard while Supabase restores authentication session or fetches hangouts
-  if (isAuthLoading || (!getHangoutById(id) && isHangoutsLoading)) {
+  if (isAuthLoading || isHangoutsLoading) {
     return (
-      <PageTransition>
+      <PageTransition key="space-loading">
         <div className="max-w-md mx-auto p-10 text-center space-y-4 my-10">
           <div className="w-8 h-8 border-4 border-[#FF6B4A] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs font-semibold text-[#6F6F6F]">Checking space access...</p>
@@ -56,7 +56,7 @@ export default function HangoutSpace() {
 
   if (!hangout) {
     return (
-      <PageTransition>
+      <PageTransition key="space-not-found">
         <div className="max-w-md mx-auto p-10 text-center space-y-4 my-10">
           <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto" />
           <h2 className="text-xl font-bold font-heading">Activity not found</h2>
@@ -69,7 +69,7 @@ export default function HangoutSpace() {
   // RESTRICTED ACCESS CHECK FOR NON-ATTENDEES
   if (!attending) {
     return (
-      <PageTransition>
+      <PageTransition key="space-locked">
         <div className="min-h-[80vh] flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-white border border-[#E8E6E1] rounded-3xl p-8 text-center space-y-6 shadow-xl">
             <div className="w-16 h-16 rounded-full bg-[#FFF0ED] text-[#FF6B4A] flex items-center justify-center mx-auto">
@@ -130,7 +130,7 @@ export default function HangoutSpace() {
   };
 
   return (
-    <PageTransition>
+    <PageTransition key="space-content">
       <div className="min-h-screen flex flex-col bg-[#F7F6F2]">
         {/* Report Modal */}
         <ReportModal
