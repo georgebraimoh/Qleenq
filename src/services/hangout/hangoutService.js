@@ -205,5 +205,81 @@ export const hangoutService = {
     if (error) {
       throw new Error(error.message);
     }
+  },
+
+  formatMessage(dbMessage) {
+    if (!dbMessage) return null;
+    let formattedTime = '';
+    if (dbMessage.created_at) {
+      try {
+        const d = new Date(dbMessage.created_at);
+        if (!isNaN(d.getTime())) {
+          formattedTime = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+      } catch (e) {
+        formattedTime = '';
+      }
+    }
+
+    return {
+      id: dbMessage.id,
+      userId: dbMessage.user_id,
+      userName: dbMessage.user_name || 'Qleenq User',
+      userAvatar: dbMessage.user_avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+      text: dbMessage.text || '',
+      timestamp: formattedTime,
+      createdAt: dbMessage.created_at,
+      type: dbMessage.type || 'user'
+    };
+  },
+
+  async fetchSpaceMessages(hangoutId) {
+    if (!hangoutId) return [];
+
+    const { data, error } = await supabase
+      .from('hangout_messages')
+      .select('*')
+      .eq('hangout_id', hangoutId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.warn('Could not fetch space messages from Supabase:', error.message);
+      return [];
+    }
+
+    return (data || []).map(this.formatMessage).filter(Boolean);
+  },
+
+  async sendSpaceMessage({ hangoutId, userId, userName, userAvatar, text, type = 'user' }) {
+    if (!hangoutId || !userId) {
+      throw new Error('Hangout ID and User ID are required to send a message.');
+    }
+
+    const trimmedText = (text || '').trim();
+    if (!trimmedText) {
+      throw new Error('Message content cannot be empty.');
+    }
+
+    const payload = {
+      hangout_id: hangoutId,
+      user_id: userId,
+      user_name: userName || 'Qleenq User',
+      user_avatar: userAvatar || null,
+      text: trimmedText,
+      type: type || 'user'
+    };
+
+    const { data, error } = await supabase
+      .from('hangout_messages')
+      .insert(payload)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return this.formatMessage(data);
   }
 };
+

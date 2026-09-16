@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { MOCK_HANGOUTS } from '../data/hangouts';
-import { INITIAL_MESSAGES } from '../data/messages';
 import { useUser } from './UserContext';
 import { hangoutService } from '../services/hangout/hangoutService';
+import { supabase } from '../lib/supabase';
 
 const LeenQContext = createContext();
 
 const STORAGE_KEY_HANGOUTS = 'leenq_hangouts_list';
-const STORAGE_KEY_MESSAGES = 'leenq_messages_map';
 
 export function LeenQProvider({ children }) {
   const { currentUser } = useUser();
@@ -20,13 +19,7 @@ export function LeenQProvider({ children }) {
     return MOCK_HANGOUTS;
   });
 
-  const [messagesMap, setMessagesMap] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY_MESSAGES);
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { console.error(e); }
-    }
-    return INITIAL_MESSAGES;
-  });
+  const [messagesMap, setMessagesMap] = useState({});
 
   useEffect(() => {
     let isMounted = true;
@@ -53,9 +46,73 @@ export function LeenQProvider({ children }) {
     localStorage.setItem(STORAGE_KEY_HANGOUTS, JSON.stringify(hangouts));
   }, [hangouts]);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_MESSAGES, JSON.stringify(messagesMap));
-  }, [messagesMap]);
+  const loadSpaceMessages = async (hangoutId) => {
+    if (!hangoutId) return [];
+    try {
+      const fetched = await hangoutService.fetchSpaceMessages(hangoutId);
+      setMessagesMap(prev => {
+        const existing = prev[hangoutId] || [];
+        const fetchedIds = new Set(fetched.map(m => m.id));
+        const realtimeOnly = existing.filter(m => !fetchedIds.has(m.id));
+        return {
+          ...prev,
+          [hangoutId]: [...fetched, ...realtimeOnly]
+        };
+      });
+      return fetched;
+    } catch (err) {
+      console.warn('Could not load space messages from Supabase:', err.message);
+      return [];
+    }
+  };
+
+  const addRealtimeMessage = (hangoutId, formattedMsg) => {
+    if (!hangoutId || !formattedMsg || !formattedMsg.id) return;
+    setMessagesMap(prev => {
+      const existing = prev[hangoutId] || [];
+      if (existing.some(m => m.id === formattedMsg.id)) {
+        return prev; // Deduplicate by database UUID
+      }
+      return {
+        ...prev,
+        [hangoutId]: [...existing, formattedMsg]
+      };
+    });
+  };
+
+  const subscribeToSpaceMessages = (hangoutId) => {
+    if (!hangoutId) return () => {};
+
+    const channelName = `space:${hangoutId}`;
+
+    const channel = supabase
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'hangout_messages',
+          filter: `hangout_id=eq.${hangoutId}`
+        },
+        (payload) => {
+          if (payload.new && payload.new.hangout_id === hangoutId) {
+            const formatted = hangoutService.formatMessage(payload.new);
+            addRealtimeMessage(hangoutId, formatted);
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          // Re-fetch space messages upon connection to prevent gaps
+          loadSpaceMessages(hangoutId);
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
 
   const joinHangout = async (id) => {
     const hangout = hangouts.find(h => h.id === id);
@@ -87,16 +144,21 @@ export function LeenQProvider({ children }) {
       return h;
     }));
 
-    const sysMsg = {
-      id: `sys-${Date.now()}`,
-      type: 'system',
-      text: `${currentUser?.name || 'A user'} joined the activity.`
-    };
-
-    setMessagesMap(prev => ({
-      ...prev,
-      [id]: [...(prev[id] || []), sysMsg]
-    }));
+    if (currentUser?.id) {
+      try {
+        const sysMsg = await hangoutService.sendSpaceMessage({
+          hangoutId: id,
+          userId: currentUser.id,
+          userName: currentUser.name || 'A user',
+          userAvatar: currentUser.avatar,
+          text: `${currentUser.name || 'A user'} joined the activity.`,
+          type: 'system'
+        });
+        if (sysMsg) addRealtimeMessage(id, sysMsg);
+      } catch (e) {
+        console.warn('Could not send join system message:', e.message);
+      }
+    }
 
     return { success: true };
   };
@@ -128,16 +190,21 @@ export function LeenQProvider({ children }) {
       return h;
     }));
 
-    const sysMsg = {
-      id: `sys-${Date.now()}`,
-      type: 'system',
-      text: `${currentUser?.name || 'A user'} left the activity.`
-    };
-
-    setMessagesMap(prev => ({
-      ...prev,
-      [id]: [...(prev[id] || []), sysMsg]
-    }));
+    if (currentUser?.id) {
+      try {
+        const sysMsg = await hangoutService.sendSpaceMessage({
+          hangoutId: id,
+          userId: currentUser.id,
+          userName: currentUser.name || 'A user',
+          userAvatar: currentUser.avatar,
+          text: `${currentUser.name || 'A user'} left the activity.`,
+          type: 'system'
+        });
+        if (sysMsg) addRealtimeMessage(id, sysMsg);
+      } catch (e) {
+        console.warn('Could not send leave system message:', e.message);
+      }
+    }
   };
 
   const createHangout = async (newHangoutData) => {
@@ -175,16 +242,21 @@ export function LeenQProvider({ children }) {
 
     setHangouts(prev => [newHangout, ...prev]);
 
-    const welcomeMsg = {
-      id: `sys-${Date.now()}`,
-      type: 'system',
-      text: `${currentUser?.name || 'Host'} created the activity and opened the Qleenq Space!`
-    };
-
-    setMessagesMap(prev => ({
-      ...prev,
-      [newHangout.id]: [welcomeMsg]
-    }));
+    if (currentUser?.id) {
+      try {
+        const welcomeMsg = await hangoutService.sendSpaceMessage({
+          hangoutId: newHangout.id,
+          userId: currentUser.id,
+          userName: currentUser.name || 'Host',
+          userAvatar: currentUser.avatar,
+          text: `${currentUser.name || 'Host'} created the activity and opened the Qleenq Space!`,
+          type: 'system'
+        });
+        if (welcomeMsg) addRealtimeMessage(newHangout.id, welcomeMsg);
+      } catch (e) {
+        console.warn('Could not send welcome system message:', e.message);
+      }
+    }
 
     return newHangout;
   };
@@ -207,23 +279,26 @@ export function LeenQProvider({ children }) {
     setHangouts(prev => prev.filter(h => h.id !== id));
   };
 
-  const sendMessage = (hangoutId, text) => {
-    if (!text.trim()) return;
+  const sendMessage = async (hangoutId, text) => {
+    if (!text || !text.trim()) return;
+    if (!currentUser?.id) {
+      throw new Error('You must be signed in to send messages.');
+    }
 
-    const newMsg = {
-      id: `msg-${Date.now()}`,
-      userId: currentUser?.id || 'guest',
-      userName: currentUser?.name || 'Guest User',
-      userAvatar: currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    const insertedMsg = await hangoutService.sendSpaceMessage({
+      hangoutId,
+      userId: currentUser.id,
+      userName: currentUser.name || 'Qleenq User',
+      userAvatar: currentUser.avatar,
       text: text.trim(),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       type: 'user'
-    };
+    });
 
-    setMessagesMap(prev => ({
-      ...prev,
-      [hangoutId]: [...(prev[hangoutId] || []), newMsg]
-    }));
+    if (insertedMsg) {
+      addRealtimeMessage(hangoutId, insertedMsg);
+    }
+
+    return insertedMsg;
   };
 
   const getHangoutById = (id) => hangouts.find(h => h.id === id);
@@ -243,6 +318,8 @@ export function LeenQProvider({ children }) {
       cancelHangout,
       deleteHangout,
       sendMessage,
+      loadSpaceMessages,
+      subscribeToSpaceMessages,
       getHangoutById,
       isAttending
     }}>
@@ -254,3 +331,4 @@ export function LeenQProvider({ children }) {
 export function useLeenQ() {
   return useContext(LeenQContext);
 }
+

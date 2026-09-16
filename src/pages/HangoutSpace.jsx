@@ -13,7 +13,7 @@ import { useUser } from '../context/UserContext';
 export default function HangoutSpace() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getHangoutById, messagesMap, sendMessage, isAttending, joinHangout, leaveHangout } = useLeenQ();
+  const { getHangoutById, messagesMap, sendMessage, loadSpaceMessages, subscribeToSpaceMessages, isAttending, joinHangout, leaveHangout } = useLeenQ();
   const { currentUser, isAuthLoading } = useUser();
 
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -34,6 +34,17 @@ export default function HangoutSpace() {
   const hangout = getHangoutById(id);
   const roomMessages = messagesMap[id] || [];
   const attending = hangout ? isAttending(hangout.id) : false;
+
+  useEffect(() => {
+    if (!id || !attending) return;
+
+    loadSpaceMessages(id);
+    const unsubscribe = subscribeToSpaceMessages(id);
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [id, attending]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -103,8 +114,12 @@ export default function HangoutSpace() {
     );
   }
 
-  const handleSend = (text) => {
-    sendMessage(hangout.id, text);
+  const handleSend = async (text) => {
+    try {
+      await sendMessage(hangout.id, text);
+    } catch (err) {
+      console.error('Failed to send space message:', err);
+    }
   };
 
   const handleLeaveActivity = () => {
