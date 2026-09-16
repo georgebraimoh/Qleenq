@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
@@ -11,40 +11,55 @@ import Navbar from './components/layout/Navbar';
 import MobileNav from './components/layout/MobileNav';
 import Footer from './components/layout/Footer';
 import AuthModal from './components/auth/AuthModal';
+import ScrollToTop from './components/common/ScrollToTop';
 
-import Home from './pages/Home';
-import Explore from './pages/Explore';
-import HangoutDetails from './pages/HangoutDetails';
-import HangoutSpace from './pages/HangoutSpace';
-import CreateHangout from './pages/CreateHangout';
-import MyHangouts from './pages/MyHangouts';
-import Profile from './pages/Profile';
-import EditProfile from './pages/EditProfile';
-import Login from './pages/Login';
-import Onboarding from './pages/Onboarding';
-import Safety from './pages/Safety';
-import ResetPassword from './pages/ResetPassword';
+// Route-level Code Splitting / Lazy Loading
+const Home = lazy(() => import('./pages/Home'));
+const Explore = lazy(() => import('./pages/Explore'));
+const HangoutDetails = lazy(() => import('./pages/HangoutDetails'));
+const HangoutSpace = lazy(() => import('./pages/HangoutSpace'));
+const CreateHangout = lazy(() => import('./pages/CreateHangout'));
+const MyHangouts = lazy(() => import('./pages/MyHangouts'));
+const Profile = lazy(() => import('./pages/Profile'));
+const EditProfile = lazy(() => import('./pages/EditProfile'));
+const Login = lazy(() => import('./pages/Login'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
+const Safety = lazy(() => import('./pages/Safety'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+
+function PageFallback() {
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center p-8">
+      <div className="text-center space-y-3">
+        <div className="w-8 h-8 border-4 border-[#FF6B4A] border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-xs font-semibold text-[#6F6F6F]">Loading Qleenq...</p>
+      </div>
+    </div>
+  );
+}
 
 function AnimatedRoutes() {
   const location = useLocation();
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/hangout/:id" element={<HangoutDetails />} />
-        <Route path="/hangout/:id/space" element={<HangoutSpace />} />
-        <Route path="/create" element={<CreateHangout />} />
-        <Route path="/my-hangouts" element={<MyHangouts />} />
-        <Route path="/profile/:username" element={<Profile />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/safety" element={<Safety />} />
-        <Route path="*" element={<Explore />} />
-      </Routes>
+      <Suspense fallback={<PageFallback />}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/hangout/:id" element={<HangoutDetails />} />
+          <Route path="/hangout/:id/space" element={<HangoutSpace />} />
+          <Route path="/create" element={<CreateHangout />} />
+          <Route path="/my-hangouts" element={<MyHangouts />} />
+          <Route path="/profile/:username" element={<Profile />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/safety" element={<Safety />} />
+          <Route path="*" element={<Explore />} />
+        </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 }
@@ -67,6 +82,7 @@ export default function App() {
         <LocationProvider>
           <LeenQProvider>
             <BrowserRouter>
+              <ScrollToTop />
               <div className="min-h-screen flex flex-col justify-between bg-[#FFF7EC] font-sans selection:bg-[#E2522B]/20 selection:text-[#E2522B]">
                 <div>
                   <Navbar />
