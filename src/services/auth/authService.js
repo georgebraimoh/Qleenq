@@ -86,7 +86,7 @@ async function getProfile(authUser) {
     username,
     avatar,
     location: 'Abuja',
-    bio: 'Joined Qleenq to discover fun activities around the world!',
+    bio: 'Joined Qleenq to discover real-life Hangouts!',
     interests: [],
     hosted_count: 0,
     attended_count: 0
@@ -227,7 +227,7 @@ export const authService = {
       username,
       avatar: avatar || DEFAULT_AVATAR,
       location: 'Abuja',
-      bio: 'Joined Qleenq to discover fun activities around the world!',
+      bio: 'Joined Qleenq to discover real-life Hangouts!',
       interests: [],
       hosted_count: 0,
       attended_count: 0

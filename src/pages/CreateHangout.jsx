@@ -9,7 +9,7 @@ import LocationAutocomplete from '../components/common/LocationAutocomplete';
 import SafetyReminder from '../components/safety/SafetyReminder';
 import ShareModal from '../components/common/ShareModal';
 import { CATEGORIES } from '../data/categories';
-import { useLeenQ } from '../context/LeenQContext';
+import { useQleenq } from '../context/QleenqContext';
 import { useUser } from '../context/UserContext';
 import { hangoutService } from '../services/hangout/hangoutService';
 
@@ -25,7 +25,7 @@ const PRESET_IMAGES = [
 
 export default function CreateHangout() {
   const navigate = useNavigate();
-  const { createHangout } = useLeenQ();
+  const { createHangout } = useQleenq();
   const { currentUser } = useUser();
 
   const [formData, setFormData] = useState({
@@ -52,7 +52,7 @@ export default function CreateHangout() {
 
   const validate = () => {
     const errs = {};
-    if (!formData.title.trim()) errs.title = 'Activity title is required';
+    if (!formData.title.trim()) errs.title = 'Hangout title is required';
     if (formData.title.trim().length < 5) errs.title = 'Title should be at least 5 characters';
     if (!formData.location || !formData.location.placeName) errs.location = 'Please select a meeting location or venue';
     if (!formData.date) errs.date = 'Date is required';
@@ -117,14 +117,14 @@ export default function CreateHangout() {
         }
       }
 
-      setUploadingState('Publishing activity...');
+      setUploadingState('Publishing Hangout...');
       const newActivity = await createHangout({
         ...formData,
         image: finalImageUrl
       });
       setCreatedActivity(newActivity);
     } catch (err) {
-      setCreateError(err.message || 'Failed to create activity.');
+      setCreateError(err.message || 'Failed to create Hangout.');
     } finally {
       setIsSubmitting(false);
       setUploadingState('');
@@ -159,7 +159,7 @@ export default function CreateHangout() {
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Success</span>
                 <h2 className="text-3xl font-bold font-heading text-[#171717]">
-                  Your activity is live.
+                  Your Hangout is live.
                 </h2>
                 <p className="text-sm text-[#6F6F6F] max-w-md mx-auto leading-relaxed">
                   Your Qleenq Space is ready. People can now discover and join you at {createdActivity.location?.placeName || 'your venue'}.
@@ -195,7 +195,7 @@ export default function CreateHangout() {
 
                 <Link to={`/hangout/${createdActivity.id}`}>
                   <Button variant="ghost" size="lg" className="w-full sm:w-auto">
-                    View activity details
+                    View Hangout details
                   </Button>
                 </Link>
               </div>
@@ -204,12 +204,12 @@ export default function CreateHangout() {
             /* FORM SECTION */
             <div className="space-y-8">
               <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Host an experience</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Host a Hangout</span>
                 <h1 className="text-3xl sm:text-4xl font-extrabold font-heading text-[#171717]">
-                  What are you getting people together for?
+                  What Hangout are you planning?
                 </h1>
                 <p className="text-sm text-[#6F6F6F]">
-                  Specify the location and details to publish your activity.
+                  Specify the location and details to host your Hangout.
                 </p>
               </div>
 
@@ -218,7 +218,7 @@ export default function CreateHangout() {
 
               <form onSubmit={handleSubmit} className="bg-white border border-[#E8E6E1] rounded-3xl p-6 md:p-10 shadow-xs space-y-6">
                 {/* Activity Name */}
-                <FormField label="Activity Name" required error={errors.title}>
+                <FormField label="Hangout Title" required error={errors.title}>
                   <input
                     type="text"
                     value={formData.title}
@@ -294,7 +294,7 @@ export default function CreateHangout() {
                 </FormField>
 
                 {/* Cover Image Picker & File Upload */}
-                <FormField label="Cover Image" helpText="Upload a photo from your device or select a preset cover for your activity.">
+                <FormField label="Cover Image" helpText="Upload a photo from your device or select a preset cover for your Hangout.">
                   <div className="space-y-4 pt-1">
                     {/* Device Upload Control */}
                     <div className="flex flex-wrap items-center gap-3">
@@ -386,7 +386,7 @@ export default function CreateHangout() {
                 <div className="pt-4 border-t border-[#E8E6E1]">
                   <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.97 }}>
                     <Button type="submit" variant="primary" size="lg" fullWidth showArrow disabled={isSubmitting}>
-                      {isSubmitting ? (uploadingState || 'Publishing activity...') : 'Create activity'}
+                      {isSubmitting ? (uploadingState || 'Publishing Hangout...') : 'Create Hangout'}
                     </Button>
                   </motion.div>
                 </div>

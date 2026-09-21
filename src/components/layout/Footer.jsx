@@ -22,7 +22,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-[#6F6F6F] text-sm leading-relaxed max-w-md">
-              Find your people. Find something to do. Turning “we should do something sometime” into real-world experiences attached to coordinates everywhere.
+              Find your people. Find something to do. Turning “we should do something sometime” into real-life Hangouts attached to coordinates everywhere.
             </p>
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#171717] bg-[#FAF4F5] px-3 py-1.5 rounded-full border border-[#EFE8DB]">
               <Globe className="w-3.5 h-3.5 text-[#800020]" />
@@ -40,7 +40,7 @@ export default function Footer() {
                   className="hover:text-[#800020] transition-colors flex items-center gap-1.5 link-nudge"
                 >
                   <Compass className="w-3.5 h-3.5 text-[#800020]" />
-                  <span>Explore Activities</span>
+                  <span>Explore Hangouts</span>
                 </Link>
               </li>
               <li>
@@ -49,7 +49,7 @@ export default function Footer() {
                   className="hover:text-[#800020] transition-colors flex items-center gap-1.5 link-nudge"
                 >
                   <Plus className="w-3.5 h-3.5 text-[#800020]" />
-                  <span>Host an Experience</span>
+                  <span>Host a Hangout</span>
                 </Link>
               </li>
               <li>
@@ -68,7 +68,7 @@ export default function Footer() {
           <div className="md:col-span-3 space-y-3">
             <h4 className="text-xs font-bold text-[#171717] uppercase tracking-wider">Manifesto</h4>
             <p className="text-xs text-[#6F6F6F] leading-relaxed">
-              No swiping algorithms. No awkward DMs. No permanent group chats. The hangout is the social unit. Connection happens naturally through real-world activities.
+              No awkward DMs. No permanent group chats. The Hangout is the social unit. Real human connections happen naturally through real-life Hangouts.
             </p>
           </div>
         </div>

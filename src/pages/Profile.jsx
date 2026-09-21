@@ -6,13 +6,13 @@ import Button from '../components/common/Button';
 import ReportModal from '../components/safety/ReportModal';
 import { MapPin, Edit3, ShieldCheck, Sparkles, Calendar, LogOut, ShieldAlert } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import { useLeenQ } from '../context/LeenQContext';
+import { useQleenq } from '../context/QleenqContext';
 import { authService } from '../services/auth/authService';
 
 export default function Profile() {
   const { username } = useParams();
   const { users, currentUser, logout, isAuthenticated, isAuthLoading, isVibingWith, vibeWith, unvibeWith, vibingIds, getUserById, openAuthModal } = useUser();
-  const { hangouts } = useLeenQ();
+  const { hangouts } = useQleenq();
   const navigate = useNavigate();
 
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -242,7 +242,7 @@ export default function Profile() {
             </div>
             <div className="p-3 bg-[#E8F0E8] rounded-2xl col-span-2">
               <span className="text-xs font-bold text-[#2D5A27] block">Active Member</span>
-              <span className="text-[10px] text-[#2D5A27]/80 block mt-0.5">Joined experiences over swiping</span>
+              <span className="text-[10px] text-[#2D5A27]/80 block mt-0.5">Joined real-life Hangouts through Qleenq.</span>
             </div>
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function Profile() {
               <div className="p-6 bg-[#F7F6F2] rounded-2xl text-center space-y-2 border border-[#E8E6E1]">
                 <p className="text-sm font-semibold text-[#171717]">No vibes added yet</p>
                 <p className="text-xs text-[#6F6F6F]">
-                  Discover activities in Explore and click <strong>Vibe</strong> on members you connect with!
+                  Discover Hangouts in Explore and click <strong>Vibe</strong> on members you connect with!
                 </p>
               </div>
             ) : (
@@ -317,7 +317,7 @@ export default function Profile() {
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-[#800020]" />
               <h2 className="text-2xl font-bold font-heading text-[#171717]">
-                Activities Attended ({attended.length})
+                Hangouts Attended ({attended.length})
               </h2>
             </div>
 

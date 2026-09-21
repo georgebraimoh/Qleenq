@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, MotionConfig } from 'framer-motion';
 
 import { UserProvider, useUser } from './context/UserContext';
-import { LeenQProvider } from './context/LeenQContext';
+import { QleenqProvider } from './context/QleenqContext';
 import { LocationProvider } from './context/LocationContext';
 import { ToastProvider } from './components/common/Toast';
 
@@ -80,7 +80,7 @@ export default function App() {
     <ToastProvider>
       <UserProvider>
         <LocationProvider>
-          <LeenQProvider>
+          <QleenqProvider>
             <MotionConfig reducedMotion="user">
               <BrowserRouter>
                 <ScrollToTop />
@@ -97,7 +97,7 @@ export default function App() {
                 </div>
               </BrowserRouter>
             </MotionConfig>
-          </LeenQProvider>
+          </QleenqProvider>
         </LocationProvider>
       </UserProvider>
     </ToastProvider>

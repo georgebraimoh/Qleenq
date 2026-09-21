@@ -18,7 +18,7 @@ export default function Safety() {
             Have fun. Stay smart.
           </h1>
           <p className="text-base text-[#6F6F6F] leading-relaxed">
-            Qleenq helps people discover experiences and meet through shared activities. These simple recommendations can help you make thoughtful decisions when meeting people offline.
+            Qleenq helps people discover, create, join, and share real-life Hangouts. These simple recommendations can help you make thoughtful decisions when meeting people offline.
           </p>
         </div>
 
@@ -49,7 +49,7 @@ export default function Safety() {
             <ul className="space-y-3 pt-2 text-sm text-[#171717]">
               <li className="flex items-start gap-3">
                 <CheckCircle2 className="w-4 h-4 text-[#800020] shrink-0 mt-1" />
-                <span><strong>Check the event details:</strong> Review the activity description, venue, and participant count.</span>
+                <span><strong>Check the Hangout details:</strong> Review the Hangout description, venue, and participant count.</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle2 className="w-4 h-4 text-[#800020] shrink-0 mt-1" />
@@ -57,7 +57,7 @@ export default function Safety() {
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle2 className="w-4 h-4 text-[#800020] shrink-0 mt-1" />
-                <span><strong>Tell someone you trust:</strong> Share your location, activity details, and expected return time with a friend or family member.</span>
+                <span><strong>Tell someone you trust:</strong> Share your location, Hangout details, and expected return time with a friend or family member.</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle2 className="w-4 h-4 text-[#800020] shrink-0 mt-1" />
@@ -96,7 +96,7 @@ export default function Safety() {
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle2 className="w-4 h-4 text-[#800020] shrink-0 mt-1" />
-                <span><strong>Trust your instincts:</strong> If an activity or person makes you feel uncomfortable, feel empowered to leave immediately.</span>
+                <span><strong>Trust your instincts:</strong> If a Hangout or person makes you feel uncomfortable, feel empowered to leave immediately.</span>
               </li>
             </ul>
           </div>
@@ -119,7 +119,7 @@ export default function Safety() {
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle2 className="w-4 h-4 text-[#800020] shrink-0 mt-1" />
-                <span><strong>Report concerning behavior:</strong> If an activity, host, or attendee was suspicious or unsafe, use Qleenq's report button.</span>
+                <span><strong>Report concerning behavior:</strong> If a Hangout, host, or attendee was suspicious or unsafe, use Qleenq's report button.</span>
               </li>
             </ul>
           </div>
@@ -129,7 +129,7 @@ export default function Safety() {
         <div className="text-center pt-6">
           <Link to="/explore">
             <Button variant="primary" size="lg" showArrow>
-              Return to Explore activities
+              Return to Explore Hangouts
             </Button>
           </Link>
         </div>

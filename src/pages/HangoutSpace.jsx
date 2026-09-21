@@ -7,13 +7,13 @@ import ChatInput from '../components/space/ChatInput';
 import Button from '../components/common/Button';
 import ReportModal from '../components/safety/ReportModal';
 import { Lock, ArrowLeft, Users, ShieldAlert, LogOut } from 'lucide-react';
-import { useLeenQ } from '../context/LeenQContext';
+import { useQleenq } from '../context/QleenqContext';
 import { useUser } from '../context/UserContext';
 
 export default function HangoutSpace() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getHangoutById, messagesMap, sendMessage, loadSpaceMessages, subscribeToSpaceMessages, isAttending, isHangoutsLoading, joinHangout, leaveHangout } = useLeenQ();
+  const { getHangoutById, messagesMap, sendMessage, loadSpaceMessages, subscribeToSpaceMessages, isAttending, isHangoutsLoading, joinHangout, leaveHangout } = useQleenq();
   const { currentUser, isAuthLoading } = useUser();
 
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -56,7 +56,7 @@ export default function HangoutSpace() {
       <PageTransition key="space-not-found">
         <div className="max-w-md mx-auto p-10 text-center space-y-4 my-10">
           <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto" />
-          <h2 className="text-xl font-bold font-heading">Activity not found</h2>
+          <h2 className="text-xl font-bold font-heading">Hangout not found</h2>
           <Button onClick={() => navigate('/explore')}>Return to Explore</Button>
         </div>
       </PageTransition>
@@ -81,7 +81,7 @@ export default function HangoutSpace() {
                 Attendees Only
               </h2>
               <p className="text-sm text-[#6F6F6F] leading-relaxed">
-                The Qleenq Space for <strong className="text-[#171717]">"{hangout.title}"</strong> is exclusive to confirmed attendees. Join the activity to communicate with attendees.
+                The Qleenq Space for <strong className="text-[#171717]">"{hangout.title}"</strong> is exclusive to confirmed attendees. Join the Hangout to communicate with attendees.
               </p>
             </div>
 
@@ -95,14 +95,14 @@ export default function HangoutSpace() {
                 fullWidth
                 showArrow
               >
-                Join activity now
+                Join Hangout now
               </Button>
 
               <button
                 onClick={() => navigate(`/hangout/${hangout.id}`)}
                 className="text-xs font-semibold text-[#6F6F6F] hover:text-[#171717] block mx-auto pt-2 cursor-pointer"
               >
-                View activity details
+                View Hangout details
               </button>
             </div>
           </div>
@@ -120,7 +120,7 @@ export default function HangoutSpace() {
   };
 
   const handleLeaveActivity = () => {
-    if (window.confirm("Are you sure you want to leave this activity? You will lose access to the Qleenq Space.")) {
+    if (window.confirm("Are you sure you want to leave this Hangout? You will lose access to the Qleenq Space.")) {
       leaveHangout(hangout.id);
       navigate('/explore');
     }
@@ -143,7 +143,7 @@ export default function HangoutSpace() {
 
         {/* Temporary Room Info & Action Bar */}
         <div className="bg-[#E8F0E8] border-b border-[#D5E4D5] px-4 py-2 flex flex-wrap items-center justify-between text-xs text-[#2D5A27] font-medium gap-2">
-          <span>💬 Temporary Qleenq Space — Conversation belongs to this activity only.</span>
+          <span>💬 Temporary Qleenq Space for attendees of this Hangout.</span>
           
           <div className="flex items-center gap-3">
             <button

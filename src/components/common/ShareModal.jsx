@@ -54,7 +54,7 @@ export default function ShareModal({ isOpen, onClose, hangout }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Share Activity">
+    <Modal isOpen={isOpen} onClose={onClose} title="Share Hangout">
       <div className="space-y-6 pt-2">
         {/* Activity Summary Badge */}
         <div className="p-4 bg-[#F7F6F2] rounded-2xl flex items-center gap-4 border border-[#E8E6E1]">
@@ -94,7 +94,7 @@ export default function ShareModal({ isOpen, onClose, hangout }) {
         {/* Share Link Copy Box */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-wider text-[#6F6F6F]">
-            Event Share Link
+            Hangout Share Link
           </label>
           <div className="flex items-center gap-2">
             <input

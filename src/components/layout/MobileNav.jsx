@@ -55,7 +55,7 @@ export default function MobileNav() {
               }`}
             >
               <Calendar className="w-5 h-5" />
-              <span>My Activities</span>
+              <span>My Hangouts</span>
 
               {isActive && (
                 <motion.div
@@ -82,7 +82,7 @@ export default function MobileNav() {
           </motion.div>
 
           <span className="text-[10px] font-semibold text-[#171717] mt-0.5">
-            Create
+            Host
           </span>
         </NavLink>
 

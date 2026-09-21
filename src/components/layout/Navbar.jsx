@@ -42,7 +42,7 @@ export default function Navbar() {
 
   const navLinks = [
     { path: '/explore', label: 'Explore', icon: Compass },
-    { path: '/my-hangouts', label: 'My Activities', icon: Calendar, onClick: handleMyHangoutsClick },
+    { path: '/my-hangouts', label: 'My Hangouts', icon: Calendar, onClick: handleMyHangoutsClick },
     { path: '/safety', label: 'Safety', icon: ShieldCheck }
   ];
 
@@ -119,7 +119,7 @@ export default function Navbar() {
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }}>
               <Button variant="primary" size="md" className="gap-1.5 shadow-sm">
                 <Plus className="w-4 h-4" />
-                <span>Create Activity</span>
+                <span>Host a Hangout</span>
               </Button>
             </motion.div>
           </Link>

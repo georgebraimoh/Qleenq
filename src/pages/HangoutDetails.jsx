@@ -10,14 +10,14 @@ import EmptyState from '../components/common/EmptyState';
 import ShareModal from '../components/common/ShareModal';
 import ReportModal from '../components/safety/ReportModal';
 import SafetyReminder from '../components/safety/SafetyReminder';
-import { useLeenQ } from '../context/LeenQContext';
+import { useQleenq } from '../context/QleenqContext';
 import { useUser } from '../context/UserContext';
 import { useLocationContext } from '../context/LocationContext';
 
 export default function HangoutDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getHangoutById, joinHangout, leaveHangout, isAttending } = useLeenQ();
+  const { getHangoutById, joinHangout, leaveHangout, isAttending } = useQleenq();
   const { getUserById, currentUser, isAuthenticated, openAuthModal } = useUser();
   const { getDistanceFromActive } = useLocationContext();
 
@@ -34,7 +34,7 @@ export default function HangoutDetails() {
           <EmptyState
             icon={AlertCircle}
             title="Something went sideways"
-            description="We couldn't load this activity. It may have been removed or doesn't exist."
+            description="We couldn't load this Hangout. It may have been removed or doesn't exist."
             actionLabel="Back to explore"
             onAction={() => navigate('/explore')}
           />
@@ -73,18 +73,18 @@ export default function HangoutDetails() {
     try {
       await joinHangout(hangout.id);
     } catch (err) {
-      console.error('Error joining activity:', err);
+      console.error('Error joining Hangout:', err);
     } finally {
       setIsJoining(false);
     }
   };
 
   const handleLeaveClick = async () => {
-    if (window.confirm("Are you sure you want to leave this activity?")) {
+    if (window.confirm("Are you sure you want to leave this Hangout?")) {
       try {
         await leaveHangout(hangout.id);
       } catch (err) {
-        console.error('Error leaving activity:', err);
+        console.error('Error leaving Hangout:', err);
       }
     }
   };
@@ -127,7 +127,7 @@ export default function HangoutDetails() {
               className="gap-1.5"
             >
               <Share2 className="w-3.5 h-3.5 text-[#800020]" />
-              <span>Share event</span>
+              <span>Share Hangout</span>
             </Button>
 
             <button
@@ -218,7 +218,7 @@ export default function HangoutDetails() {
 
             {/* Description Section */}
             <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#800020]">About this activity</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#800020]">About this Hangout</h3>
               <p className="text-base text-[#171717] leading-relaxed whitespace-pre-line">
                 {hangout.description}
               </p>
@@ -283,7 +283,7 @@ export default function HangoutDetails() {
           <div className="lg:col-span-4 sticky top-24 space-y-6">
             <div className="editorial-surface p-6 space-y-6 shadow-xl">
               <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#6F6F6F]">Activity Status</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#6F6F6F]">Hangout Status</span>
                 <div className="text-2xl font-bold font-heading text-[#171717]">
                   {attending ? (
                     <motion.span
@@ -294,7 +294,7 @@ export default function HangoutDetails() {
                       <Check className="w-6 h-6 text-emerald-600 stroke-[3]" /> You're going
                     </motion.span>
                   ) : isFull ? (
-                    <span className="text-rose-500">Activity Full</span>
+                    <span className="text-rose-500">Hangout Full</span>
                   ) : (
                     <span className="flex items-center gap-1">
                       <motion.span
@@ -330,7 +330,7 @@ export default function HangoutDetails() {
                         onClick={handleLeaveClick}
                         className="w-full text-xs font-semibold text-rose-500 hover:underline py-1 cursor-pointer"
                       >
-                        Leave activity
+                        Leave Hangout
                       </motion.button>
                     )}
                   </>
@@ -344,7 +344,7 @@ export default function HangoutDetails() {
                       fullWidth
                       showArrow={!isFull && !isJoining}
                     >
-                      {isJoining ? 'Joining...' : isFull ? 'Capacity Full' : 'Join activity'}
+                      {isJoining ? 'Joining...' : isFull ? 'Capacity Full' : 'Join Hangout'}
                     </Button>
                   </motion.div>
                 )}
@@ -388,7 +388,7 @@ export default function HangoutDetails() {
               variant="primary"
               size="md"
             >
-              {isJoining ? 'Joining...' : isFull ? 'Full' : 'Join Activity'}
+              {isJoining ? 'Joining...' : isFull ? 'Full' : 'Join Hangout'}
             </Button>
           )}
         </div>

@@ -4,12 +4,12 @@ import PageTransition from '../components/layout/PageTransition';
 import HangoutCard from '../components/hangout/HangoutCard';
 import EmptyState from '../components/common/EmptyState';
 import { Calendar, Shield, CheckCircle2, Compass } from 'lucide-react';
-import { useLeenQ } from '../context/LeenQContext';
+import { useQleenq } from '../context/QleenqContext';
 import { useUser } from '../context/UserContext';
 
 export default function MyHangouts() {
   const navigate = useNavigate();
-  const { hangouts } = useLeenQ();
+  const { hangouts } = useQleenq();
   const { currentUser, isAuthLoading } = useUser();
   const [activeTab, setActiveTab] = useState('upcoming');
 
@@ -19,7 +19,7 @@ export default function MyHangouts() {
       <PageTransition>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center space-y-4">
           <div className="w-8 h-8 border-4 border-[#800020] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs font-semibold text-[#6F6F6F]">Loading your activities...</p>
+          <p className="text-xs font-semibold text-[#6F6F6F]">Loading your Hangouts...</p>
         </div>
       </PageTransition>
     );
@@ -67,10 +67,10 @@ export default function MyHangouts() {
             Your Schedule
           </span>
           <h1 className="text-4xl font-extrabold font-heading text-[#171717]">
-            My Activities
+            My Hangouts
           </h1>
           <p className="text-sm text-[#6F6F6F]">
-            Manage activities you're attending, hosting, or have enjoyed across Abuja.
+            Manage Hangouts you are hosting or attending.
           </p>
         </div>
 
@@ -119,13 +119,13 @@ export default function MyHangouts() {
             icon={Compass}
             title={
               activeTab === 'hosting'
-                ? "You haven't created an activity yet"
+                ? "You haven't hosted a Hangout yet"
                 : activeTab === 'past'
-                ? "No completed activities yet"
+                ? "No completed Hangouts yet"
                 : "Your calendar looks a little empty"
             }
-            description="Find something fun happening around Abuja or create your own casual meetup."
-            actionLabel="Explore activities"
+            description="Find real-life Hangouts happening near you or host your own."
+            actionLabel="Explore Hangouts"
             onAction={() => navigate('/explore')}
           />
         ) : (

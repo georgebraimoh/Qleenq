@@ -8,9 +8,9 @@ import { safetyService } from '../../services/safety/safetyService';
 import { ShieldAlert, CheckCircle } from 'lucide-react';
 
 const REPORT_REASONS = [
-  "Suspicious activity",
+  "Suspicious behavior",
   "Harassment or offensive behavior",
-  "Fake event or misleading info",
+  "Fake Hangout or misleading info",
   "Inappropriate content",
   "Unsafe location",
   "Scam or spam",

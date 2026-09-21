@@ -105,7 +105,7 @@ export const hangoutService = {
 
   async createHangout(userId, newHangoutData) {
     if (!userId) {
-      throw new Error('You must be signed in to host an activity.');
+      throw new Error('You must be signed in to host a Hangout.');
     }
 
     const loc = newHangoutData.location || {};

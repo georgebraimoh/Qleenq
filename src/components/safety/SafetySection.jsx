@@ -17,7 +17,7 @@ const SAFETY_TIPS = [
     icon: Users,
     title: 'Tell someone',
     summary: 'Let a friend or family member know your plans.',
-    details: 'Share where you are going, what activity you are doing, and who you are meeting with someone you trust.'
+    details: 'Share where you are going, what Hangout you are joining, and who you are meeting with someone you trust.'
   },
   {
     id: 'go-together',
@@ -37,7 +37,7 @@ const SAFETY_TIPS = [
     id: 'instincts',
     icon: Compass,
     title: 'Trust your instincts',
-    summary: 'Leave anytime if an activity doesn’t feel right.',
+    summary: 'Leave anytime if a Hangout doesn’t feel right.',
     details: 'If something feels off or uncomfortable, you don’t have to stay. Feel empowered to leave and head somewhere safe.'
   },
   {
@@ -71,7 +71,7 @@ export default function SafetySection() {
               Meet people. Have fun. Stay safe.
             </h2>
             <p className="text-sm md:text-base text-[#6F6F6F] leading-relaxed">
-              Qleenq is about getting out, trying new things and meeting people through shared experiences. A little awareness goes a long way.
+              Qleenq is about getting out, trying new things and meeting people through real-life Hangouts. A little awareness goes a long way.
             </p>
           </div>
 

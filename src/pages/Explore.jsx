@@ -4,12 +4,12 @@ import PageTransition from '../components/layout/PageTransition';
 import SearchBar from '../components/hangout/SearchBar';
 import FilterBar from '../components/hangout/FilterBar';
 import HangoutGrid from '../components/hangout/HangoutGrid';
-import { useLeenQ } from '../context/LeenQContext';
+import { useQleenq } from '../context/QleenqContext';
 import { useLocationContext } from '../context/LocationContext';
 import { MapPin, RefreshCw } from 'lucide-react';
 
 export default function Explore() {
-  const { hangouts } = useLeenQ();
+  const { hangouts } = useQleenq();
   const {
     activeSearchLocation,
     distanceRadius,
@@ -101,11 +101,11 @@ export default function Explore() {
         {/* Header Section */}
         <div className="space-y-4 max-w-3xl">
           <h1 className="text-4xl sm:text-5xl font-extrabold font-heading text-[#171717] tracking-tight">
-            What's happening <span className="text-[#800020]">{locationTitle}?</span>
+            What Hangouts are happening <span className="text-[#800020]">{locationTitle}?</span>
           </h1>
 
           <p className="text-base text-[#6F6F6F] leading-relaxed">
-            Browse activities, meetups, and real-world gatherings happening near real coordinates.
+            Browse real-life Hangouts, meetups, and real-world gatherings happening near real coordinates.
           </p>
 
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
@@ -120,7 +120,7 @@ export default function Explore() {
         {/* Results Counter */}
         <div className="flex items-center justify-between pt-4 border-t border-[#E8E6E1] text-xs text-[#6F6F6F]">
           <span>
-            Showing <strong className="text-[#171717]">{filteredHangouts.length}</strong> {filteredHangouts.length === 1 ? 'activity' : 'activities'}
+            Showing <strong className="text-[#171717]">{filteredHangouts.length}</strong> {filteredHangouts.length === 1 ? 'Hangout' : 'Hangouts'}
           </span>
           {isFiltered && (
             <button

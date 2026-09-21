@@ -8,13 +8,13 @@ import AvatarStack from '../components/common/AvatarStack';
 import EmptyState from '../components/common/EmptyState';
 import LocationAutocomplete from '../components/common/LocationAutocomplete';
 import PageTransition from '../components/layout/PageTransition';
-import { useLeenQ } from '../context/LeenQContext';
+import { useQleenq } from '../context/QleenqContext';
 import { useLocationContext } from '../context/LocationContext';
 import { CATEGORIES } from '../data/categories';
 import SafetySection from '../components/safety/SafetySection';
 
 export default function Home() {
-  const { hangouts } = useLeenQ();
+  const { hangouts } = useQleenq();
   const { setSearchLocation, activeSearchLocation } = useLocationContext();
   const navigate = useNavigate();
 
@@ -59,7 +59,7 @@ export default function Home() {
                   className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F4EFE6] border border-[#EFE8DB] text-[#171717] text-xs font-bold shadow-xs"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-[#800020]" />
-                  <span>Real-World Meetups · Zero Pressure</span>
+                  <span>Real-Life Hangouts · Zero Pressure</span>
                 </motion.div>
 
                 <motion.h1
@@ -71,7 +71,7 @@ export default function Home() {
                 >
                   Find your people. <br />
                   <span className="relative inline-block text-[#800020]">
-                    Find something to do.
+                    Find a Hangout.
                     <svg
                       className="absolute left-0 -bottom-2.5 w-full h-3 text-[#800020]/80 overflow-visible"
                       viewBox="0 0 300 12"
@@ -101,7 +101,7 @@ export default function Home() {
                   }}
                   className="text-lg md:text-xl text-[#6F6F6F] font-medium leading-relaxed max-w-2xl"
                 >
-                  Qleenq helps people turn <strong className="text-[#171717]">“we should do something sometime”</strong> into something actually happening. Discover real-world experiences and meet people through shared activities anywhere.
+                  Qleenq helps people turn <strong className="text-[#171717]">“we should do something sometime”</strong> into real-life Hangouts. Discover local gatherings, meet around shared interests, and bring people together.
                 </motion.p>
 
                 {/* Location Search Input */}
@@ -132,7 +132,7 @@ export default function Home() {
                   <Link to="/explore">
                     <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
                       <Button variant="primary" size="lg" showArrow>
-                        Explore activities
+                        Explore Hangouts
                       </Button>
                     </motion.div>
                   </Link>
@@ -140,7 +140,7 @@ export default function Home() {
                   <Link to="/create">
                     <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
                       <Button variant="outline" size="lg">
-                        Create an activity
+                        Create a Hangout
                       </Button>
                     </motion.div>
                   </Link>
@@ -221,13 +221,13 @@ export default function Home() {
         >
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Live Activities</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#800020]">Live Hangouts</span>
               <h2 className="text-3xl md:text-4xl font-bold font-heading text-[#171717] mt-1">
-                Experiences happening near real places
+                Hangouts happening near real places
               </h2>
             </div>
             <Link to="/explore" className="text-sm font-semibold text-[#800020] hover:underline flex items-center gap-1 link-nudge">
-              <span>View all activities</span>
+              <span>View all Hangouts</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -236,9 +236,9 @@ export default function Home() {
             {globalHighlights.length === 0 ? (
               <div className="col-span-full py-6 text-center">
                 <EmptyState
-                  title="No activities yet"
-                  description="Be the first to host an activity in your area!"
-                  actionLabel="Create an activity"
+                  title="No Hangouts yet"
+                  description="Be the first to host a Hangout in your area!"
+                  actionLabel="Create a Hangout"
                   onAction={() => navigate('/create')}
                 />
               </div>
@@ -266,7 +266,7 @@ export default function Home() {
                 You might enjoy
               </h2>
               <p className="text-sm text-[#6F6F6F] mt-2">
-                Find activities based on what genuinely makes your week worthwhile.
+                Find Hangouts based on what genuinely makes your week worthwhile.
               </p>
             </div>
 
@@ -302,22 +302,22 @@ export default function Home() {
               </div>
 
               <h2 className="text-3xl sm:text-5xl font-extrabold font-heading text-white leading-tight">
-                "The hangout is the social unit, not the person."
+                "The Hangout is the social unit, not the profile."
               </h2>
 
               <p className="text-stone-300 text-base md:text-lg leading-relaxed">
-                Qleenq works wherever people are — from major cities to local neighborhood parks, coffee houses, and sports fields. We build a database of hangouts attached to real-world coordinates.
+                Qleenq works wherever people are — from major cities to local neighborhood parks, coffee houses, and sports fields. Discover real-life Hangouts attached to real-world coordinates.
               </p>
 
               <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-stone-400">
                 <span className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-[#800020]" /> No Swiping Algorithms
+                  <Shield className="w-4 h-4 text-[#800020]" /> Real-Life Gatherings
                 </span>
                 <span className="flex items-center gap-2">
                   <Globe className="w-4 h-4 text-[#800020]" /> Location-First Architecture
                 </span>
                 <span className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-[#800020]" /> Temporary Event Rooms
+                  <Users className="w-4 h-4 text-[#800020]" /> Temporary Hangout Spaces
                 </span>
               </div>
             </div>
@@ -341,20 +341,20 @@ export default function Home() {
           <div className="relative overflow-hidden bg-[#FDF0F2] border border-[#800020]/20 rounded-3xl p-10 md:p-14 space-y-6">
             <span className="accent-orb left-6 -top-4 w-3 h-3 bg-[#800020] rotate-12" />
             <h2 className="text-3xl md:text-4xl font-extrabold font-heading text-[#171717]">
-              Ready to go somewhere?
+              Ready to host or join a Hangout?
             </h2>
             <p className="text-base text-[#6F6F6F] max-w-lg mx-auto leading-relaxed">
-              Discover activities near you or host your own casual meetup in less than two minutes.
+              Discover Hangouts near you or host your own casual meetup in less than two minutes.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <Link to="/explore">
                 <Button variant="primary" size="lg" showArrow>
-                  Explore activities
+                  Explore Hangouts
                 </Button>
               </Link>
               <Link to="/create">
                 <Button variant="outline" size="lg">
-                  Create an activity
+                  Create a Hangout
                 </Button>
               </Link>
             </div>
