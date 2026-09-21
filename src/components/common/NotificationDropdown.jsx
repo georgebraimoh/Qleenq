@@ -17,10 +17,9 @@ export default function NotificationDropdown() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  if (!isAuthenticated) return null;
-
-  // Close dropdown on outside click
+  // Close dropdown on outside click (Must be called unconditionally before early returns)
   useEffect(() => {
+    if (!isAuthenticated) return;
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
@@ -28,7 +27,9 @@ export default function NotificationDropdown() {
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isAuthenticated]);
+
+  if (!isAuthenticated) return null;
 
   const handleNotificationClick = async (notif) => {
     if (!notif.isRead) {
