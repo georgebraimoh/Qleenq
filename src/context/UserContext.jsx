@@ -21,9 +21,26 @@ export function UserProvider({ children }) {
 
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
-  // Get the current Supabase user when the app starts.
+  // Get the current Supabase user when the app starts and load profiles.
   useEffect(() => {
     let mounted = true;
+
+    const loadAllProfiles = async () => {
+      try {
+        const allProfiles = await authService.fetchProfilesAll();
+        if (mounted && allProfiles && allProfiles.length > 0) {
+          setUsers(prev => {
+            const map = new Map(prev.map(u => [u.id, u]));
+            allProfiles.forEach(u => map.set(u.id, u));
+            return Array.from(map.values());
+          });
+        }
+      } catch (e) {
+        console.warn('Could not load initial profiles:', e);
+      }
+    };
+
+    loadAllProfiles();
 
     const loadCurrentUser = async () => {
       try {
@@ -104,6 +121,25 @@ export function UserProvider({ children }) {
     };
   }, []);
 
+  const fetchAndCacheProfiles = async (ids) => {
+    if (!ids || (Array.isArray(ids) && ids.length === 0)) return;
+    const missing = (Array.isArray(ids) ? ids : [ids]).filter(id => id && !users.some(u => u.id === id));
+    if (missing.length === 0) return;
+
+    try {
+      const fetched = await authService.fetchProfiles(missing);
+      if (fetched && fetched.length > 0) {
+        setUsers(prev => {
+          const map = new Map(prev.map(u => [u.id, u]));
+          fetched.forEach(u => map.set(u.id, u));
+          return Array.from(map.values());
+        });
+      }
+    } catch (e) {
+      console.warn('Could not fetch profiles by IDs:', e.message);
+    }
+  };
+
   const openAuthModal = (view = 'welcome') => {
     setAuthModalInitialView(view);
     setIsAuthModalOpen(true);
@@ -176,9 +212,17 @@ export function UserProvider({ children }) {
   };
 
   const getUserById = (id) => {
-    return users.find(user => user.id === id) || {
+    if (!id) return null;
+    const found = users.find(user => user.id === id);
+    if (found) return found;
+
+    if (currentUser?.id === id) return currentUser;
+
+    fetchAndCacheProfiles([id]);
+
+    return {
       id,
-      name: 'Unknown User',
+      name: 'Qleenq Member',
       avatar:
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       location: 'Abuja'
@@ -202,7 +246,8 @@ export function UserProvider({ children }) {
         loginWithFacebook,
         logout,
         updateProfile,
-        getUserById
+        getUserById,
+        fetchAndCacheProfiles
       }}
     >
       {children}

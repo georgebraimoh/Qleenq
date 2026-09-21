@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase';
 const LeenQContext = createContext();
 
 export function LeenQProvider({ children }) {
-  const { currentUser } = useUser();
+  const { currentUser, fetchAndCacheProfiles } = useUser();
 
   const [hangouts, setHangouts] = useState(() => {
     try {
@@ -25,6 +25,16 @@ export function LeenQProvider({ children }) {
         const fetched = await hangoutService.fetchHangouts();
         if (isMounted) {
           setHangouts(fetched || []);
+          if (fetched && fetched.length > 0) {
+            const userIds = [];
+            fetched.forEach(h => {
+              if (h.hostId) userIds.push(h.hostId);
+              if (h.attendeeIds) userIds.push(...h.attendeeIds);
+            });
+            if (userIds.length > 0 && fetchAndCacheProfiles) {
+              fetchAndCacheProfiles(userIds);
+            }
+          }
         }
       } catch (err) {
         console.error('Failed loading hangouts from Supabase:', err);
@@ -35,7 +45,7 @@ export function LeenQProvider({ children }) {
 
     loadSupabaseHangouts();
     return () => { isMounted = false; };
-  }, [currentUser?.id]);
+  }, [currentUser?.id, fetchAndCacheProfiles]);
 
   const loadSpaceMessages = async (hangoutId) => {
     if (!hangoutId) return [];

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import PageTransition from '../components/layout/PageTransition';
 import HangoutCard from '../components/hangout/HangoutCard';
@@ -7,6 +7,7 @@ import ReportModal from '../components/safety/ReportModal';
 import { MapPin, Edit3, ShieldCheck, Sparkles, Calendar, LogOut, ShieldAlert } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useLeenQ } from '../context/LeenQContext';
+import { authService } from '../services/auth/authService';
 
 export default function Profile() {
   const { username } = useParams();
@@ -15,9 +16,48 @@ export default function Profile() {
   const navigate = useNavigate();
 
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [asyncUser, setAsyncUser] = useState(null);
+  const [isFetchingProfile, setIsFetchingProfile] = useState(false);
 
-  // Loading guard while Supabase restores authentication session
-  if (isAuthLoading) {
+  useEffect(() => {
+    let mounted = true;
+
+    if (!username) {
+      setAsyncUser(null);
+      setIsFetchingProfile(false);
+      return;
+    }
+
+    const cached = users.find(u => u.username === username);
+    if (cached) {
+      setAsyncUser(cached);
+      setIsFetchingProfile(false);
+      return;
+    }
+
+    setIsFetchingProfile(true);
+    authService
+      .fetchProfileByUsername(username)
+      .then(p => {
+        if (mounted) {
+          setAsyncUser(p || null);
+          setIsFetchingProfile(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setAsyncUser(null);
+          setIsFetchingProfile(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [username, users]);
+
+  // Loading guard while Supabase restores authentication session or fetches profile
+  if (isAuthLoading || (username && isFetchingProfile && !asyncUser && !users.some(u => u.username === username))) {
     return (
       <PageTransition>
         <div className="max-w-5xl mx-auto px-4 py-20 text-center space-y-4">
@@ -28,8 +68,8 @@ export default function Profile() {
     );
   }
 
-  // Find user by username or fallback to current user
-  const profileUser = (username ? users.find(u => u.username === username) : null) || currentUser;
+  // Find user by username parameter or fallback to current user
+  const profileUser = username ? (users.find(u => u.username === username) || asyncUser) : currentUser;
 
   if (!profileUser) {
     return (

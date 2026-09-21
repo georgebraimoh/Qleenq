@@ -31,6 +31,22 @@ function formatUser(authUser, profile = {}) {
   };
 }
 
+function formatProfile(p) {
+  if (!p) return null;
+  return {
+    id: p.id,
+    name: p.name || 'Qleenq Member',
+    email: p.email || '',
+    username: p.username || `user_${p.id.slice(0, 8)}`,
+    avatar: p.avatar || DEFAULT_AVATAR,
+    location: p.location || 'Abuja',
+    bio: p.bio || '',
+    interests: p.interests || [],
+    hostedCount: p.hosted_count || 0,
+    attendedCount: p.attended_count || 0
+  };
+}
+
 async function getProfile(authUser) {
   const { data: profile, error } = await supabase
     .from('profiles')
@@ -91,6 +107,54 @@ async function getProfile(authUser) {
 }
 
 export const authService = {
+  formatProfile,
+
+  async fetchProfilesAll() {
+    const { data: profiles, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('Could not fetch profiles from Supabase:', error.message);
+      return [];
+    }
+
+    return (profiles || []).map(formatProfile);
+  },
+
+  async fetchProfiles(ids) {
+    if (!ids || (Array.isArray(ids) && ids.length === 0)) return [];
+    const uniqueIds = Array.from(new Set(Array.isArray(ids) ? ids : [ids])).filter(Boolean);
+
+    const { data: profiles, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .in('id', uniqueIds);
+
+    if (error) {
+      console.warn('Could not fetch profiles by IDs from Supabase:', error.message);
+      return [];
+    }
+
+    return (profiles || []).map(formatProfile);
+  },
+
+  async fetchProfileByUsername(username) {
+    if (!username) return null;
+
+    const { data: p, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('username', username)
+      .maybeSingle();
+
+    if (error || !p) {
+      return null;
+    }
+
+    return formatProfile(p);
+  },
   async loginWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
