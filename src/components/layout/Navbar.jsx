@@ -5,6 +5,7 @@ import { Compass, Calendar, Plus, User, LogOut, LogIn, ChevronDown, MapPin, Navi
 import { useUser } from '../../context/UserContext';
 import { useLocationContext } from '../../context/LocationContext';
 import Button from '../common/Button';
+import NotificationDropdown from '../common/NotificationDropdown';
 
 export default function Navbar() {
   const { currentUser, isAuthenticated, openAuthModal, logout } = useUser();
@@ -54,7 +55,7 @@ export default function Navbar() {
             <motion.div
               whileHover={{ scale: 1.08, rotate: -3 }}
               whileTap={{ scale: 0.95 }}
-              className="w-10 h-10 rounded-2xl bg-[#800020] flex items-center justify-center text-white shadow-md shadow-[#800020]/25"
+              className="w-10 h-10 rounded-2xl bg-[#800020] flex items-center justify-center text-[#FAF4F5] shadow-md shadow-[#800020]/25"
             >
               <span className="font-heading font-extrabold text-xl tracking-tighter">Q</span>
             </motion.div>
@@ -107,7 +108,12 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Action & User Auth State */}
+        {/* Mobile Notification Bell & Action Controls */}
+        <div className="flex md:hidden items-center gap-2">
+          <NotificationDropdown />
+        </div>
+
+        {/* Desktop Action & User Auth State */}
         <div className="hidden md:flex items-center gap-4">
           <Link to="/create" onClick={handleCreateClick}>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }}>
@@ -117,6 +123,8 @@ export default function Navbar() {
               </Button>
             </motion.div>
           </Link>
+
+          <NotificationDropdown />
 
           {isAuthenticated ? (
             /* User Dropdown Menu */

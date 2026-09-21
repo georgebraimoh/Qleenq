@@ -11,13 +11,14 @@ import { authService } from '../services/auth/authService';
 
 export default function Profile() {
   const { username } = useParams();
-  const { users, currentUser, logout, isAuthenticated, isAuthLoading } = useUser();
+  const { users, currentUser, logout, isAuthenticated, isAuthLoading, isVibingWith, vibeWith, unvibeWith, vibingIds, getUserById, openAuthModal } = useUser();
   const { hangouts } = useLeenQ();
   const navigate = useNavigate();
 
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [asyncUser, setAsyncUser] = useState(null);
   const [isFetchingProfile, setIsFetchingProfile] = useState(false);
+  const [isVibeLoading, setIsVibeLoading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -84,10 +85,31 @@ export default function Profile() {
   }
 
   const isOwnProfile = Boolean(currentUser?.id && profileUser.id === currentUser.id && isAuthenticated);
+  const isVibing = isVibingWith(profileUser.id);
 
-  // Calculate activities
+  const handleVibeToggle = async () => {
+    if (!isAuthenticated) {
+      openAuthModal('welcome');
+      return;
+    }
+    setIsVibeLoading(true);
+    try {
+      if (isVibing) {
+        await unvibeWith(profileUser.id);
+      } else {
+        await vibeWith(profileUser.id);
+      }
+    } catch (err) {
+      console.error('Failed to update vibe status:', err);
+    } finally {
+      setIsVibeLoading(false);
+    }
+  };
+
+  // Calculate activities & vibing profiles
   const hosted = hangouts.filter(h => h.hostId === profileUser.id);
   const attended = hangouts.filter(h => h.attendeeIds && h.attendeeIds.includes(profileUser.id));
+  const vibingProfiles = vibingIds.map(id => getUserById(id)).filter(Boolean);
 
   return (
     <PageTransition>
@@ -155,15 +177,39 @@ export default function Profile() {
                 </Button>
               </div>
             ) : (
-              <Button
-                onClick={() => setReportModalOpen(true)}
-                variant="outline"
-                size="sm"
-                className="gap-1.5 text-[#6F6F6F] hover:text-rose-600 hover:border-rose-200"
-              >
-                <ShieldAlert className="w-4 h-4" />
-                <span>Report member</span>
-              </Button>
+              <div className="flex items-center gap-3 shrink-0">
+                <Button
+                  onClick={handleVibeToggle}
+                  disabled={isVibeLoading}
+                  variant={isVibing ? "outline" : "primary"}
+                  size="md"
+                  className="gap-2 shadow-sm"
+                >
+                  {isVibeLoading ? (
+                    <span>Updating...</span>
+                  ) : isVibing ? (
+                    <>
+                      <Sparkles className="w-4 h-4 text-[#800020] fill-[#800020]" />
+                      <span>Vibing</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      <span>Vibe</span>
+                    </>
+                  )}
+                </Button>
+
+                <Button
+                  onClick={() => setReportModalOpen(true)}
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-[#6F6F6F] hover:text-rose-600 hover:border-rose-200"
+                >
+                  <ShieldAlert className="w-4 h-4" />
+                  <span>Report member</span>
+                </Button>
+              </div>
             )}
           </div>
 
@@ -200,6 +246,52 @@ export default function Profile() {
             </div>
           </div>
         </div>
+
+        {/* Who You Vibe With Section (Visible on own profile) */}
+        {isOwnProfile && (
+          <div className="space-y-6 pt-6 border-t border-[#E8E6E1]">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-[#800020]" />
+              <h2 className="text-2xl font-bold font-heading text-[#171717]">
+                Who you vibe with
+              </h2>
+            </div>
+
+            {vibingProfiles.length === 0 ? (
+              <div className="p-6 bg-[#F7F6F2] rounded-2xl text-center space-y-2 border border-[#E8E6E1]">
+                <p className="text-sm font-semibold text-[#171717]">No vibes added yet</p>
+                <p className="text-xs text-[#6F6F6F]">
+                  Discover activities in Explore and click <strong>Vibe</strong> on members you connect with!
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {vibingProfiles.map(u => (
+                  <Link
+                    key={u.id}
+                    to={`/profile/${u.username}`}
+                    className="p-4 bg-white border border-[#E8E6E1] rounded-2xl flex items-center justify-between hover:border-[#D6D2C9] hover:shadow-sm transition-all pressable"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src={u.avatar}
+                        alt={u.name}
+                        className="w-12 h-12 rounded-full object-cover shrink-0 border border-[#E8E6E1]"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-[#171717] truncate">{u.name}</p>
+                        <p className="text-xs text-[#6F6F6F] truncate">@{u.username} · {u.location}</p>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 bg-[#FAF4F5] text-[#800020] text-[10px] font-extrabold uppercase rounded-full border border-[#F0D5DA] shrink-0 ml-2">
+                      Vibing
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Hosted Activities Section */}
         {hosted.length > 0 && (
