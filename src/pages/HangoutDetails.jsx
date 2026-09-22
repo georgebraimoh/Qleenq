@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Calendar, Clock, Users, ArrowLeft, MessageSquare, Check, AlertCircle, Share2, MoreHorizontal, ShieldAlert } from 'lucide-react';
+import { MapPin, Calendar, Clock, Users, ArrowLeft, MessageSquare, Check, AlertCircle, Share2, MoreHorizontal, ShieldAlert, ExternalLink } from 'lucide-react';
 import PageTransition from '../components/layout/PageTransition';
 import Button from '../components/common/Button';
 import HostCard from '../components/hangout/HostCard';
@@ -164,7 +164,12 @@ export default function HangoutDetails() {
             <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
               <div className="flex items-center gap-2 text-xs font-medium text-amber-300">
                 <MapPin className="w-4 h-4 text-[#800020]" />
-                <span>{locObj.placeName} · {locObj.city}, {locObj.country}</span>
+                <span>
+                  {locObj.placeName || locObj.address}
+                  {[locObj.city, locObj.country].filter(Boolean).length > 0 && (
+                    ` · ${[locObj.city, locObj.country].filter(Boolean).join(', ')}`
+                  )}
+                </span>
                 {distanceKm !== null && (
                   <span className="bg-stone-900/80 px-2 py-0.5 rounded-full text-white text-[10px]">
                     {distanceKm} km away
@@ -204,14 +209,27 @@ export default function HangoutDetails() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#FDF0F2] text-[#800020] flex items-center justify-center shrink-0">
+              <div className="flex items-[#800020] items-start gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#FDF0F2] text-[#800020] flex items-center justify-center shrink-0 mt-0.5">
                   <MapPin className="w-5 h-5" />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0 space-y-1">
                   <span className="text-[10px] uppercase font-bold tracking-wider text-[#6F6F6F]">Venue</span>
-                  <p className="text-sm font-bold text-[#171717] font-heading truncate">{locObj.placeName}</p>
-                  <p className="text-[10px] text-[#6F6F6F]">{locObj.address}</p>
+                  <p className="text-sm font-bold text-[#171717] font-heading truncate">{locObj.placeName || locObj.address}</p>
+                  {locObj.address && locObj.address !== locObj.placeName && (
+                    <p className="text-[10px] text-[#6F6F6F]">{locObj.address}</p>
+                  )}
+                  {(hangout.googleMapsUrl || locObj.googleMapsUrl) && (
+                    <a
+                      href={hangout.googleMapsUrl || locObj.googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 bg-[#800020] hover:bg-[#600018] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Open in Google Maps</span>
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

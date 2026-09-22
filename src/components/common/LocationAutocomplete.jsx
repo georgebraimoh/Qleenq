@@ -30,14 +30,18 @@ export default function LocationAutocomplete({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const text = e.target.value;
     setQuery(text);
 
     if (text.trim().length >= 2) {
-      const matches = locationService.searchPlaces(text);
-      setSuggestions(matches);
-      setIsOpen(true);
+      try {
+        const matches = await locationService.searchPlaces(text);
+        setSuggestions(matches);
+        setIsOpen(true);
+      } catch (err) {
+        setSuggestions([]);
+      }
     } else {
       setSuggestions([]);
       setIsOpen(false);
@@ -81,10 +85,15 @@ export default function LocationAutocomplete({
           type="text"
           value={query}
           onChange={handleInputChange}
-          onFocus={() => {
+          onFocus={async () => {
             if (query.trim().length >= 2) {
-              setSuggestions(locationService.searchPlaces(query));
-              setIsOpen(true);
+              try {
+                const matches = await locationService.searchPlaces(query);
+                setSuggestions(matches);
+                setIsOpen(true);
+              } catch (err) {
+                setSuggestions([]);
+              }
             }
           }}
           placeholder={placeholder}

@@ -5,7 +5,7 @@ import { Sparkles, Calendar, Clock, MapPin, Users, Image as ImageIcon, CheckCirc
 import PageTransition from '../components/layout/PageTransition';
 import Button from '../components/common/Button';
 import FormField from '../components/common/FormField';
-import LocationAutocomplete from '../components/common/LocationAutocomplete';
+import LocationPicker from '../components/common/LocationPicker';
 import SafetyReminder from '../components/safety/SafetyReminder';
 import ShareModal from '../components/common/ShareModal';
 import { CATEGORIES } from '../data/categories';
@@ -54,7 +54,16 @@ export default function CreateHangout() {
     const errs = {};
     if (!formData.title.trim()) errs.title = 'Hangout title is required';
     if (formData.title.trim().length < 5) errs.title = 'Title should be at least 5 characters';
-    if (!formData.location || !formData.location.placeName) errs.location = 'Please select a meeting location or venue';
+    
+    const loc = formData.location;
+    const locText = typeof loc === 'string' ? loc : (loc?.placeName || loc?.address || '');
+
+    if (!locText || !locText.trim()) {
+      errs.location = 'Please enter the location of your Hangout';
+    } else if (loc && typeof loc === 'object' && loc.hasUrlError) {
+      errs.location = 'Please correct or remove the invalid Google Maps link before publishing';
+    }
+
     if (!formData.date) errs.date = 'Date is required';
     if (!formData.description.trim()) errs.description = 'Please add a brief description of what people will do';
     if (formData.description.trim().length < 20) errs.description = 'Description should be at least 20 characters';
@@ -228,12 +237,12 @@ export default function CreateHangout() {
                   />
                 </FormField>
 
-                {/* Where is it happening? (Location Autocomplete) */}
-                <FormField label="Where is it happening?" required error={errors.location} helpText="Search for a public venue, landmark, street, pitch, or use your GPS location.">
-                  <LocationAutocomplete
+                {/* Where is it happening? (Manual Location Entry) */}
+                <FormField label="Where is it happening?" required error={errors.location} helpText="Enter the location of your Hangout. You can optionally paste a Google Maps link.">
+                  <LocationPicker
                     value={formData.location}
                     onSelectLocation={(loc) => setFormData({ ...formData, location: loc })}
-                    placeholder="Search venue, landmark, or address (e.g. Jabi Lake, Central Park, Shoreditch...)"
+                    error={errors.location}
                   />
                 </FormField>
 

@@ -14,14 +14,16 @@ function formatHangout(dbHangout, attendeesList = []) {
     category: dbHangout.category,
     location: {
       placeName: dbHangout.place_name || 'Meeting Location',
-      address: dbHangout.address || '',
-      city: dbHangout.city || 'Abuja',
-      country: dbHangout.country || 'Nigeria',
-      countryCode: dbHangout.country_code || 'NG',
-      latitude: dbHangout.latitude || 9.0765,
-      longitude: dbHangout.longitude || 7.3986
+      address: dbHangout.address || dbHangout.place_name || '',
+      city: dbHangout.city || null,
+      country: dbHangout.country || null,
+      countryCode: dbHangout.country_code || null,
+      latitude: dbHangout.latitude || null,
+      longitude: dbHangout.longitude || null,
+      googleMapsUrl: dbHangout.google_maps_url || null
     },
-    city: dbHangout.city || 'Abuja',
+    googleMapsUrl: dbHangout.google_maps_url || null,
+    city: dbHangout.city || null,
     date: dbHangout.date,
     time: dbHangout.time,
     description: dbHangout.description,
@@ -109,6 +111,7 @@ export const hangoutService = {
     }
 
     const loc = newHangoutData.location || {};
+    const locText = typeof loc === 'string' ? loc : (loc.placeName || loc.address || newHangoutData.locationText || '');
 
     const payload = {
       title: newHangoutData.title.trim(),
@@ -122,13 +125,14 @@ export const hangoutService = {
       status: 'upcoming',
       featured: false,
       is_popular: false,
-      place_name: loc.placeName || 'Meeting Location',
-      address: loc.address || '',
-      city: loc.city || 'Abuja',
-      country: loc.country || 'Nigeria',
-      country_code: loc.countryCode || 'NG',
-      latitude: loc.latitude || 9.0765,
-      longitude: loc.longitude || 7.3986
+      place_name: (locText || 'Meeting Location').trim(),
+      address: (locText || '').trim(),
+      city: loc.city || null,
+      country: loc.country || null,
+      country_code: loc.countryCode || null,
+      latitude: typeof loc.latitude === 'number' && !isNaN(loc.latitude) ? loc.latitude : null,
+      longitude: typeof loc.longitude === 'number' && !isNaN(loc.longitude) ? loc.longitude : null,
+      google_maps_url: loc.googleMapsUrl || newHangoutData.googleMapsUrl || null
     };
 
     const { data: createdHangout, error: createError } = await supabase
