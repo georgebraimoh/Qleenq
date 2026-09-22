@@ -11,8 +11,8 @@ export default function ShareModal({ isOpen, onClose, hangout }) {
   if (!hangout) return null;
 
   const locName = typeof hangout.location === 'object'
-    ? `${hangout.location.placeName}, ${hangout.location.city}`
-    : (hangout.location || 'Abuja');
+    ? (hangout.location.placeName || hangout.location.address || 'Location TBD')
+    : (hangout.location || 'Location TBD');
 
   const formattedDate = hangout.date
     ? new Date(hangout.date).toLocaleDateString('en-US', {

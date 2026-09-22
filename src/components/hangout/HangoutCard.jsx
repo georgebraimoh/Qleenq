@@ -1,118 +1,165 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MapPin, Calendar, ArrowUpRight, Navigation } from 'lucide-react';
+import { MapPin, Calendar, Clock, Navigation, CheckCircle, ChevronRight } from 'lucide-react';
 import AvatarStack from '../common/AvatarStack';
 import { useUser } from '../../context/UserContext';
+import { useQleenq } from '../../context/QleenqContext';
 import { useLocationContext } from '../../context/LocationContext';
 
 export default function HangoutCard({ hangout, featured = false }) {
   const { getUserById } = useUser();
+  const { isAttending } = useQleenq();
   const { getDistanceFromActive } = useLocationContext();
 
-  const formattedDate = new Date(hangout.date).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric'
-  });
+  // Host resolution
+  const host = getUserById(hangout.hostId);
+  const hostName = host?.name || 'Qleenq Host';
+  const hostAvatar = host?.avatar;
 
-  const isFull = hangout.attendeeIds.length >= hangout.maxAttendees;
+  // Formatted date string
+  const formattedDate = hangout.date
+    ? new Date(hangout.date).toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+      })
+    : '';
 
-  // Handle structured vs fallback location objects safely
-  const locObj = typeof hangout.location === 'object' ? hangout.location : {
-    placeName: hangout.location,
-    city: hangout.city || 'Local',
-    country: hangout.country || 'Global'
-  };
+  // Attendee calculation & state
+  const attendeeCount = (hangout.attendeeIds || []).length;
+  const maxCapacity = hangout.maxAttendees || 10;
+  const isFull = attendeeCount >= maxCapacity;
+  const isAttendingHangout = isAttending ? isAttending(hangout.id) : false;
 
-  const distanceKm = getDistanceFromActive(locObj.latitude, locObj.longitude);
+  // Handle manual raw location vs object format cleanly
+  const locationText =
+    typeof hangout.location === 'object'
+      ? (hangout.location.placeName || hangout.location.address || hangout.city || 'Location TBD')
+      : (hangout.location || hangout.address || 'Location TBD');
+
+  // Optional distance calculation
+  const distanceKm = getDistanceFromActive
+    ? getDistanceFromActive(
+        typeof hangout.location === 'object' ? hangout.location.latitude : null,
+        typeof hangout.location === 'object' ? hangout.location.longitude : null
+      )
+    : null;
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      whileTap={{ scale: 0.985 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className={`group editorial-card overflow-hidden flex flex-col justify-between cursor-pointer ${
-        featured ? 'md:col-span-2 md:grid md:grid-cols-2 md:items-stretch' : ''
+    <Link
+      to={`/hangout/${hangout.id}`}
+      className={`block h-full group focus:outline-none ${
+        featured ? 'md:col-span-2' : ''
       }`}
     >
-      {/* Cover Image Container */}
-      <div className={`relative overflow-hidden img-zoom ${featured ? 'h-64 md:h-full' : 'h-52'}`}>
-        <img
-          src={hangout.image}
-          alt={hangout.title}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-        
-        {/* Category Pill & Capacity */}
-        <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
-          <span className="px-3 py-1 text-xs font-extrabold tracking-wider bg-[#171717] text-white rounded-full shadow-xs transition-transform duration-300 group-hover:-rotate-2">
-            {hangout.category}
-          </span>
-          {isFull && (
-            <span className="px-3 py-1 text-xs font-extrabold tracking-wider uppercase bg-[#800020] text-white rounded-full shadow-xs">
-              Full Capacity
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -4 }}
+        whileTap={{ scale: 0.985 }}
+        viewport={{ once: true, margin: '-30px' }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        className={`h-full bg-white border border-[#E8E6E1] group-hover:border-[#800020] rounded-3xl overflow-hidden shadow-xs group-hover:shadow-md transition-all flex flex-col justify-between ${
+          featured ? 'md:grid md:grid-cols-2 md:items-stretch' : ''
+        }`}
+      >
+        {/* Cover Image Container */}
+        <div className={`relative overflow-hidden bg-[#F7F6F2] ${featured ? 'h-56 md:h-full' : 'h-48 sm:h-52'}`}>
+          <img
+            src={hangout.image || 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1200&q=80'}
+            alt={hangout.title || 'Hangout Cover'}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+
+          {/* Category Pill & Capacity */}
+          <div className="absolute top-3 left-3 z-10 flex flex-wrap gap-2">
+            <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-[#171717]/90 backdrop-blur-xs text-white rounded-full shadow-xs">
+              {hangout.category}
             </span>
+            {isFull && (
+              <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-[#800020] text-white rounded-full shadow-xs">
+                Full
+              </span>
+            )}
+          </div>
+
+          {/* Distance Badge if available */}
+          {distanceKm !== null && (
+            <div className="absolute top-3 right-3 z-10 bg-white/90 backdrop-blur-xs text-[#171717] text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs border border-[#E8E6E1]">
+              <Navigation className="w-3 h-3 text-[#800020] fill-[#800020]" />
+              <span>{distanceKm} km away</span>
+            </div>
           )}
         </div>
 
-        {/* Distance Badge if available */}
-        {distanceKm !== null && (
-          <div className="absolute top-4 right-4 z-10 bg-[#F4EFE6] text-[#171717] text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm border border-[#EFE8DB] transition-transform duration-300 group-hover:scale-105">
-            <Navigation className="w-3 h-3 text-[#800020] fill-[#800020]" />
-            <span>{distanceKm} km away</span>
-          </div>
-        )}
+        {/* Content Body */}
+        <div className="p-5 flex flex-col justify-between flex-1 space-y-4">
+          <div className="space-y-2.5">
+            {/* Host Profile Info */}
+            <div className="flex items-center gap-2 text-xs font-medium text-[#6F6F6F]">
+              <img
+                src={hostAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
+                alt={hostName}
+                className="w-5 h-5 rounded-full object-cover border border-[#E8E6E1] shrink-0"
+              />
+              <span className="truncate">
+                Hosted by <strong className="text-[#171717] font-semibold">{hostName}</strong>
+              </span>
+            </div>
 
-        {/* Date Tag */}
-        <div className="absolute bottom-4 left-4 z-10 text-white text-xs font-bold flex items-center gap-1.5 drop-shadow-md">
-          <Calendar className="w-3.5 h-3.5 text-[#800020]" />
-          <span>{formattedDate} · {hangout.time}</span>
-        </div>
-      </div>
+            {/* Title */}
+            <h3 className="text-lg font-bold font-heading text-[#171717] group-hover:text-[#800020] transition-colors line-clamp-2 leading-snug">
+              {hangout.title}
+            </h3>
 
-      {/* Content Section */}
-      <div className="p-6 flex flex-col justify-between flex-1 space-y-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#6F6F6F] mb-2">
-            <MapPin className="w-3.5 h-3.5 text-[#800020] shrink-0" />
-            <span className="truncate">{locObj.placeName} · {locObj.city}, {locObj.country}</span>
-          </div>
+            {/* Location (Raw Manual Text) */}
+            <div className="flex items-center gap-1.5 text-xs text-[#6F6F6F]">
+              <MapPin className="w-3.5 h-3.5 text-[#800020] shrink-0" />
+              <span className="truncate">{locationText}</span>
+            </div>
 
-          <h3 className="text-xl font-bold font-heading text-[#171717] group-hover:text-[#800020] transition-colors line-clamp-2 leading-tight">
-            {hangout.title}
-          </h3>
-
-          <p className="mt-2 text-sm text-[#6F6F6F] line-clamp-2 leading-relaxed">
-            {hangout.description}
-          </p>
-        </div>
-
-        {/* Footer info: Attendees & Link CTA */}
-        <div className="pt-4 border-t border-[#EFE8DB] flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <AvatarStack attendeeIds={hangout.attendeeIds} maxVisible={3} size="sm" />
-            <div className="text-xs text-[#6F6F6F] font-semibold">
-              <span className="font-extrabold text-[#171717]">{hangout.attendeeIds.length}</span> / {hangout.maxAttendees} going
+            {/* Date & Time */}
+            <div className="flex items-center gap-1.5 text-xs font-medium text-[#6F6F6F]">
+              <Calendar className="w-3.5 h-3.5 text-[#800020] shrink-0" />
+              <span>{formattedDate}{hangout.time ? ` · ${hangout.time}` : ''}</span>
             </div>
           </div>
 
-          <Link
-            to={`/hangout/${hangout.id}`}
-            className="w-9 h-9 rounded-full bg-[#FAF4F5] border border-[#EFE8DB] group-hover:bg-[#800020] group-hover:border-[#800020] group-hover:text-white text-[#171717] flex items-center justify-center transition-all duration-200 shadow-xs"
-            aria-label={`View details for ${hangout.title}`}
-          >
-            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </Link>
+          {/* Footer Bar: Roster + Join Action Button */}
+          <div className="pt-3 border-t border-[#E8E6E1] flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <AvatarStack attendeeIds={hangout.attendeeIds || []} maxVisible={3} size="sm" />
+              <span className="text-xs text-[#6F6F6F] font-medium truncate">
+                <strong className="text-[#171717] font-bold">{attendeeCount}</strong> going
+              </span>
+            </div>
+
+            {/* Visual CTA Button State */}
+            <div className="shrink-0">
+              {isAttendingHangout ? (
+                <span className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-xl flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Joined</span>
+                </span>
+              ) : isFull ? (
+                <span className="px-3 py-1.5 bg-[#F7F6F2] text-[#6F6F6F] border border-[#E8E6E1] text-xs font-bold rounded-xl">
+                  Full
+                </span>
+              ) : (
+                <span className="px-3.5 py-1.5 bg-[#800020] group-hover:bg-[#600018] text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center gap-1">
+                  <span>Join Hangout</span>
+                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </span>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 }

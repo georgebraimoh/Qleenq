@@ -62,8 +62,8 @@ export function UserProvider({ children }) {
         (newNotif) => {
           if (mounted && newNotif) {
             setNotifications(prev => {
-              if (prev.some(n => n.id === newNotif.id)) return prev;
-              return [newNotif, ...prev];
+              const filtered = prev.filter(n => n.id !== newNotif.id);
+              return [newNotif, ...filtered];
             });
           }
         }

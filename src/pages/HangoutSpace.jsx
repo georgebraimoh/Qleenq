@@ -6,23 +6,36 @@ import ChatMessage from '../components/space/ChatMessage';
 import ChatInput from '../components/space/ChatInput';
 import Button from '../components/common/Button';
 import ReportModal from '../components/safety/ReportModal';
-import { Lock, ArrowLeft, Users, ShieldAlert, LogOut } from 'lucide-react';
+import { Lock, Sparkles, ShieldAlert, LogOut } from 'lucide-react';
 import { useQleenq } from '../context/QleenqContext';
 import { useUser } from '../context/UserContext';
 
 export default function HangoutSpace() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getHangoutById, messagesMap, sendMessage, loadSpaceMessages, subscribeToSpaceMessages, isAttending, isHangoutsLoading, joinHangout, leaveHangout } = useQleenq();
+  const {
+    getHangoutById,
+    messagesMap,
+    sendMessage,
+    loadSpaceMessages,
+    subscribeToSpaceMessages,
+    isAttending,
+    isHangoutsLoading,
+    joinHangout,
+    leaveHangout
+  } = useQleenq();
   const { currentUser, isAuthLoading } = useUser();
 
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
+  const isNearBottomRef = useRef(true);
 
   const hangout = (isAuthLoading || isHangoutsLoading) ? null : getHangoutById(id);
   const roomMessages = (id && messagesMap[id]) ? messagesMap[id] : [];
   const attending = hangout ? isAttending(hangout.id) : false;
 
+  // Subscribe to space realtime messages
   useEffect(() => {
     if (!id || !attending || isAuthLoading || isHangoutsLoading) return;
 
@@ -34,36 +47,48 @@ export default function HangoutSpace() {
     };
   }, [id, attending, isAuthLoading, isHangoutsLoading]);
 
+  // Handle scroll position tracking
+  const handleScroll = () => {
+    if (!chatContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+    // Consider near bottom if within 150px of the bottom
+    isNearBottomRef.current = scrollHeight - scrollTop - clientHeight < 150;
+  };
+
+  // Auto-scroll when new messages arrive if user is near bottom
   useEffect(() => {
     if (isAuthLoading || isHangoutsLoading) return;
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (isNearBottomRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [roomMessages.length, isAuthLoading, isHangoutsLoading]);
 
-  // Loading guard while Supabase restores authentication session or fetches hangouts
+  // Loading state guard
   if (isAuthLoading || isHangoutsLoading) {
     return (
       <PageTransition key="space-loading">
         <div className="max-w-md mx-auto p-10 text-center space-y-4 my-10">
           <div className="w-8 h-8 border-4 border-[#800020] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs font-semibold text-[#6F6F6F]">Checking space access...</p>
+          <p className="text-xs font-semibold text-[#6F6F6F]">Connecting to Qleenq Space...</p>
         </div>
       </PageTransition>
     );
   }
 
+  // Not found state guard
   if (!hangout) {
     return (
       <PageTransition key="space-not-found">
         <div className="max-w-md mx-auto p-10 text-center space-y-4 my-10">
           <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto" />
-          <h2 className="text-xl font-bold font-heading">Hangout not found</h2>
+          <h2 className="text-xl font-bold font-heading text-[#171717]">Hangout not found</h2>
           <Button onClick={() => navigate('/explore')}>Return to Explore</Button>
         </div>
       </PageTransition>
     );
   }
 
-  // RESTRICTED ACCESS CHECK FOR NON-ATTENDEES
+  // Locked access guard for non-attendees
   if (!attending) {
     return (
       <PageTransition key="space-locked">
@@ -113,6 +138,8 @@ export default function HangoutSpace() {
 
   const handleSend = async (text) => {
     try {
+      // Always auto-scroll to bottom when sending a new message
+      isNearBottomRef.current = true;
       await sendMessage(hangout.id, text);
     } catch (err) {
       console.error('Failed to send space message:', err);
@@ -128,8 +155,8 @@ export default function HangoutSpace() {
 
   return (
     <PageTransition key="space-content">
-      <div className="min-h-screen flex flex-col bg-[#F7F6F2]">
-        {/* Report Modal */}
+      <div className="min-h-screen flex flex-col bg-[#FAF4F5]">
+        {/* Safety Report Modal */}
         <ReportModal
           isOpen={reportModalOpen}
           onClose={() => setReportModalOpen(false)}
@@ -138,13 +165,13 @@ export default function HangoutSpace() {
           targetTitle={hangout.title}
         />
 
-        {/* Room Header */}
+        {/* Space Header */}
         <SpaceHeader hangout={hangout} />
 
-        {/* Temporary Room Info & Action Bar */}
-        <div className="bg-[#E8F0E8] border-b border-[#D5E4D5] px-4 py-2 flex flex-wrap items-center justify-between text-xs text-[#2D5A27] font-medium gap-2">
+        {/* Space Context Banner & Actions */}
+        <div className="bg-[#E8F0E8] border-b border-[#D5E4D5] px-4 py-2.5 flex flex-wrap items-center justify-between text-xs text-[#2D5A27] font-medium gap-2">
           <span>💬 Temporary Qleenq Space for attendees of this Hangout.</span>
-          
+
           <div className="flex items-center gap-3">
             <button
               onClick={() => setReportModalOpen(true)}
@@ -166,11 +193,24 @@ export default function HangoutSpace() {
           </div>
         </div>
 
-        {/* Chat Feed */}
-        <div className="flex-1 max-w-4xl w-full mx-auto p-4 md:p-6 overflow-y-auto space-y-2 pb-24">
+        {/* Chat Messages Feed Container */}
+        <div
+          ref={chatContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 max-w-3xl w-full mx-auto p-4 md:p-6 overflow-y-auto space-y-2"
+        >
           {roomMessages.length === 0 ? (
-            <div className="text-center py-12 text-xs text-[#6F6F6F]">
-              No messages yet. Say hello to the hangout!
+            /* Qleenq Intentional Empty State */
+            <div className="py-16 text-center space-y-3">
+              <div className="w-12 h-12 rounded-full bg-[#FDF0F2] text-[#800020] flex items-center justify-center mx-auto shadow-xs">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-base font-bold font-heading text-[#171717]">You're early.</h3>
+                <p className="text-xs text-[#6F6F6F] max-w-xs mx-auto">
+                  Say something and start the conversation with other attendees!
+                </p>
+              </div>
             </div>
           ) : (
             roomMessages.map((msg) => (
@@ -185,7 +225,7 @@ export default function HangoutSpace() {
         </div>
 
         {/* Fixed Message Input Bar */}
-        <div className="sticky bottom-0 z-20 max-w-4xl w-full mx-auto w-full shadow-lg">
+        <div className="sticky bottom-0 z-20 max-w-3xl w-full mx-auto shadow-lg">
           <ChatInput onSendMessage={handleSend} />
         </div>
       </div>

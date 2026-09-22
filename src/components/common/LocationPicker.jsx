@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Link as LinkIcon, AlertCircle } from 'lucide-react';
 import { locationService } from '../../services/location/locationService';
 
@@ -15,29 +15,30 @@ export default function LocationPicker({
   const [googleMapsUrl, setGoogleMapsUrl] = useState(initialUrl);
   const [urlValidationError, setUrlValidationError] = useState('');
 
-  // Sync internal state if prop value changes externally (e.g. form reset or initial load)
+  // Flag to distinguish internal user typing from external prop resets
+  const isInternalChangeRef = useRef(false);
+
+  // Sync internal state ONLY when value changes externally (e.g. form reset or initial load)
   useEffect(() => {
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      return;
+    }
+
     if (value && typeof value === 'object') {
-      const text = value.placeName || value.address || '';
-      const url = value.googleMapsUrl || '';
-      // Only sync if trimmed values actually differ, to preserve spaces typed at the end
-      if (text.trim() !== locationText.trim()) {
-        setLocationText(text);
-      }
-      if (url.trim() !== googleMapsUrl.trim()) {
-        setGoogleMapsUrl(url);
-      }
+      setLocationText(value.placeName || value.address || '');
+      setGoogleMapsUrl(value.googleMapsUrl || '');
     } else if (typeof value === 'string') {
-      if (value.trim() !== locationText.trim()) {
-        setLocationText(value);
-      }
+      setLocationText(value);
     } else if (!value) {
-      if (locationText) setLocationText('');
-      if (googleMapsUrl) setGoogleMapsUrl('');
+      setLocationText('');
+      setGoogleMapsUrl('');
     }
   }, [value]);
 
   const handleChange = (text, url) => {
+    isInternalChangeRef.current = true;
+
     const trimmedUrl = url.trim();
 
     let urlErr = '';
@@ -57,7 +58,7 @@ export default function LocationPicker({
       return;
     }
 
-    // Preserve raw text (including spaces) so user can type spaces normally
+    // Preserve raw input text exactly as typed (spaces, commas, periods, quotes) without trimming while typing
     onSelectLocation({
       placeName: text,
       address: text,
