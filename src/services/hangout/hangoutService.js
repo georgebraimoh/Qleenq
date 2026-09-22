@@ -280,6 +280,12 @@ export const hangoutService = {
       .single();
 
     if (error) {
+      console.error('[sendSpaceMessage Error]', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      });
       throw new Error(error.message);
     }
 

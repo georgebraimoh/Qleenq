@@ -304,7 +304,8 @@ export function QleenqProvider({ children }) {
 
   const isAttending = (hangoutId) => {
     const hangout = getHangoutById(hangoutId);
-    return hangout && currentUser?.id ? (hangout.attendeeIds || []).includes(currentUser.id) : false;
+    if (!hangout || !currentUser?.id) return false;
+    return (hangout.attendeeIds || []).includes(currentUser.id) || hangout.hostId === currentUser.id;
   };
 
   return (
