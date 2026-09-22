@@ -96,6 +96,7 @@ export default function CreateHangout() {
     setCustomImageFile(file);
     const previewUrl = URL.createObjectURL(file);
     setCustomImagePreview(previewUrl);
+    e.target.value = '';
   };
 
   const handleClearCustomImage = () => {

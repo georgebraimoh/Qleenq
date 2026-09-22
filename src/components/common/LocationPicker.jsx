@@ -15,20 +15,29 @@ export default function LocationPicker({
   const [googleMapsUrl, setGoogleMapsUrl] = useState(initialUrl);
   const [urlValidationError, setUrlValidationError] = useState('');
 
-  // Sync internal state if prop value changes externally
+  // Sync internal state if prop value changes externally (e.g. form reset or initial load)
   useEffect(() => {
     if (value && typeof value === 'object') {
       const text = value.placeName || value.address || '';
       const url = value.googleMapsUrl || '';
-      setLocationText(text);
-      setGoogleMapsUrl(url);
+      // Only sync if trimmed values actually differ, to preserve spaces typed at the end
+      if (text.trim() !== locationText.trim()) {
+        setLocationText(text);
+      }
+      if (url.trim() !== googleMapsUrl.trim()) {
+        setGoogleMapsUrl(url);
+      }
     } else if (typeof value === 'string') {
-      setLocationText(value);
+      if (value.trim() !== locationText.trim()) {
+        setLocationText(value);
+      }
+    } else if (!value) {
+      if (locationText) setLocationText('');
+      if (googleMapsUrl) setGoogleMapsUrl('');
     }
   }, [value]);
 
   const handleChange = (text, url) => {
-    const trimmedText = text.trim();
     const trimmedUrl = url.trim();
 
     let urlErr = '';
@@ -43,14 +52,15 @@ export default function LocationPicker({
 
     setUrlValidationError(urlErr);
 
-    if (!trimmedText && !trimmedUrl) {
+    if (!text && !trimmedUrl) {
       onSelectLocation(null);
       return;
     }
 
+    // Preserve raw text (including spaces) so user can type spaces normally
     onSelectLocation({
-      placeName: trimmedText || (isValidUrl && trimmedUrl ? 'Custom Google Maps Location' : ''),
-      address: trimmedText || (isValidUrl && trimmedUrl ? 'Navigable via Google Maps' : ''),
+      placeName: text,
+      address: text,
       city: typeof value === 'object' ? value?.city || null : null,
       country: typeof value === 'object' ? value?.country || null : null,
       countryCode: typeof value === 'object' ? value?.countryCode || null : null,
