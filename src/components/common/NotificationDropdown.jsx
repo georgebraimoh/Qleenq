@@ -8,6 +8,7 @@ export default function NotificationDropdown() {
   const {
     notifications,
     unreadCount,
+    getUserById,
     markNotificationRead,
     markAllNotificationsRead,
     isAuthenticated
@@ -37,7 +38,12 @@ export default function NotificationDropdown() {
     }
     setIsOpen(false);
 
-    if (notif.hangoutId) {
+    if (notif.type === 'vibe' && notif.actorId) {
+      const actor = getUserById(notif.actorId);
+      if (actor?.username) {
+        navigate(`/profile/${actor.username}`);
+      }
+    } else if (notif.hangoutId) {
       navigate(`/hangout/${notif.hangoutId}`);
     }
   };
